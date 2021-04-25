@@ -1,9 +1,11 @@
+import { format } from 'date-fns';
 import { h } from 'preact';
 import { useEffect, useRef, useState, useLayoutEffect } from 'preact/hooks';
 import styled from 'styled-components';
 import { thumb } from './contentful';
+import { Link, route } from 'preact-router';
 
-const Gallery = styled.section`
+export const Gallery = styled.section`
   display: grid;
   grid-template: 98vw / 98vw;
   grid-auto-rows: 98vw;
@@ -18,7 +20,7 @@ const Gallery = styled.section`
   grid-gap: 1vw;
   margin: 1vw;
 `;
-const AlbumThumb = styled.div`
+export const AlbumThumb = styled.div`
   background-size: cover;
   color: white;
   text-shadow: 0 1px 1px #000;
@@ -34,6 +36,10 @@ const AlbumThumb = styled.div`
   flex-direction: column;
   justify-content: flex-end;
 `;
+const StyledLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+`;
 
 export const AlbumGallery = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -47,13 +53,13 @@ export const AlbumGallery = () => {
   return (
     <Gallery>
       {albums.map((album, k) => (
-        <AlbumThumbnail key={k} album={album} />
+        <AlbumThumbnail key={k} album={album} id={`${k}`} />
       ))}
     </Gallery>
   );
 };
 
-const AlbumThumbnail = ({ album }: { album: Album }) => {
+const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
   const el = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [cover, setCover] = useState<Photo | undefined>(undefined);
@@ -92,9 +98,17 @@ const AlbumThumbnail = ({ album }: { album: Album }) => {
       style={{
         backgroundImage: cover ? `url(${thumb(250)(cover)})` : undefined,
       }}
+      onClick={() => {
+        route(`/album/${encodeURIComponent(album.title)}-${id}`);
+      }}
     >
-      <h2>{album.title}</h2>
-      <p>{album.photos.length} photos</p>
+      <StyledLink href={`/album/${encodeURIComponent(album.title)}-${id}`}>
+        <h2>{album.title}</h2>
+        <p>
+          {album.photos.length} photos &middot;{' '}
+          {format(new Date(album.created), 'd. LLLL yyyy')}
+        </p>
+      </StyledLink>
     </AlbumThumb>
   );
 };

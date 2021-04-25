@@ -74,14 +74,15 @@ const AlbumThumbnail = ({ album }: { album: Album }) => {
 
   useEffect(() => {
     if (!visible) return;
-    if (album.cover === undefined) return;
-    fetch(`/data/photos/${album.cover}.json`)
+    const cover = album.cover ?? album.photos[0];
+    if (cover === undefined) return;
+    fetch(`/data/photos/${cover}.json`)
       .then((res) => res.json())
       .then((p) => {
         setCover(p);
       })
       .catch(() => {
-        console.error(`Failed to load photo data: ${album.cover}`);
+        console.error(`Failed to load photo data: ${cover}`);
       });
   }, [visible]);
 

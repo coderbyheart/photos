@@ -3,14 +3,16 @@ module.exports = {
   mount: {
     public: { url: '/', static: true },
     src: { url: '/dist' },
-    data: { url: '/data' },
+    'data-js': { url: '/data' },
   },
   plugins: [
     '@prefresh/snowpack',
     '@snowpack/plugin-dotenv',
     ['@snowpack/plugin-typescript'],
+    './load-data.plugin.js',
   ],
   alias: {
     react: 'preact/compat',
   },
+  routes: [{ match: 'routes', src: '.*', dest: '/index.html' }],
 };

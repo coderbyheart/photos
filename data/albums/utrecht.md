@@ -1,0 +1,35 @@
+---
+title: Utrecht
+createdAt: '2010-02-19T10:00:46.000Z'
+cover: '4370220176'
+photos:
+  - '4369482869'
+  - '4369480953'
+  - '4370228272'
+  - '4370226806'
+  - '4369476843'
+  - '4370224004'
+  - '4369472773'
+  - '4370220176'
+  - '4370218440'
+  - '4370216908'
+  - '4369465431'
+  - '4369463081'
+  - '4370210368'
+  - '4369460215'
+  - '4370207448'
+  - '4370205176'
+  - '4370203154'
+  - '4369452893'
+  - '4369450769'
+  - '4369448867'
+  - '4369447349'
+  - '4369445061'
+  - '4370192250'
+  - '4370190440'
+  - '4370188410'
+  - '4370186422'
+  - '4369436077'
+---
+
+Den Nachmittag des sechsten Tages verbrachten wir in Utrecht, wo wir einen tollen [Liegeplatz](http://maps.google.de/maps?f=q&source=s_q&hl=de&geocode=&q=Catharijnesingel,+Utrecht,+Nederland&sll=52.084563,5.119554&sspn=0.005934,0.016512&ie=UTF8&hq=&hnear=Catharijnesingel,+Utrecht,+Niederlande&ll=52.086679,5.117226&spn=0.023733,0.066047&t=h&z=15) mitten in der Stadt hatten. Die Altstadt von Utrecht ist wirklich spektakulär, besonders mit den vielen Restaurants unten in den Grachtenkellern.

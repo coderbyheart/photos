@@ -1,24 +1,76 @@
 import { Fragment, h } from 'preact';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
-import { thumb } from './contentful';
+import { thumb, header } from './contentful';
 import { Gallery, AlbumThumb } from './AlbumGallery';
 import { format } from 'date-fns';
+import styled from 'styled-components';
+
+const Header = styled.header`
+  display: flex;
+  color: var(--text-color-light);
+  text-shadow: var(--text-shadow);
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  background-size: cover;
+  min-height: 500px;
+  justify-content: center;
+  h1 {
+    font-weight: normal;
+    font-size: 300%;
+  }
+`;
+
+const Description = styled.p``;
 
 export const Album = ({ id }: { id: number }) => {
   const [album, setAlbum] = useState<Album | undefined>(undefined);
+  const [cover, setCover] = useState<Photo | undefined>(undefined);
   useEffect(() => {
     fetch('/data/albums.json')
       .then((res) => res.json())
-      .then((albums) => setAlbum(albums[id]));
+      .then((albums) => setAlbum(albums[id]))
+      .catch(() => {
+        console.error(`Failed to load albums!`);
+      });
   }, []);
+  useEffect(() => {
+    if (album === undefined) return;
+    fetch(`/data/photos/${album.cover ?? album.photos[0]}.json`)
+      .then((res) => res.json())
+      .then((p) => {
+        setCover(p);
+      })
+      .catch(() => {
+        console.error(`Failed to load album cover: ${id}`);
+      });
+  }, [album]);
   return album === undefined ? (
     <p>Loading ...</p>
   ) : (
-    <Gallery>
-      {album.photos.map((id, k) => (
-        <PhotoThumb id={id} key={k} />
-      ))}
-    </Gallery>
+    <Fragment>
+      <Header
+        style={{
+          backgroundImage: cover ? `url(${header(cover)})` : undefined,
+        }}
+      >
+        <h1>{album.title}</h1>
+        <p>
+          {format(new Date(album.createdAt), 'd. LLLL yyyy')} &middot;{' '}
+          {album.photos.length} photos
+        </p>
+        {album.description_html && (
+          <Description
+            dangerouslySetInnerHTML={{ __html: album.description_html }}
+          />
+        )}
+      </Header>
+      <Gallery>
+        {album.photos.map((id, k) => (
+          <PhotoThumb id={id} key={k} />
+        ))}
+      </Gallery>
+    </Fragment>
   );
 };
 
@@ -59,13 +111,6 @@ const PhotoThumb = ({ id }: { id: string }) => {
       style={{
         backgroundImage: photo ? `url(${thumb(250)(photo)})` : undefined,
       }}
-    >
-      {photo && (
-        <Fragment>
-          <h2>{photo.name}</h2>
-          <p>{format(new Date(photo.takenAt), 'd. LLLL yyyy')}</p>
-        </Fragment>
-      )}
-    </AlbumThumb>
+    />
   );
 };

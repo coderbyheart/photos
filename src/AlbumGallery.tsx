@@ -23,7 +23,7 @@ export const Gallery = styled.section`
 export const AlbumThumb = styled.div`
   background-size: cover;
   color: white;
-  text-shadow: 0 1px 1px #000;
+  text-shadow: var(--text-shadow);
   padding: 1vw;
   h2 {
     font-weight: normal;
@@ -106,7 +106,7 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
         <h2>{album.title}</h2>
         <p>
           {album.photos.length} photos &middot;{' '}
-          {format(new Date(album.created), 'd. LLLL yyyy')}
+          {format(new Date(album.createdAt), 'd. LLLL yyyy')}
         </p>
       </StyledLink>
     </AlbumThumb>

@@ -2,7 +2,8 @@ type Album = {
   id: string;
   title: string;
   description?: string;
-  created: string;
+  description_html?: string;
+  createdAt: string;
   cover?: string;
   photos: string[];
 };
@@ -10,6 +11,8 @@ type Album = {
 type Photo = {
   id: string;
   name: string;
+  description?: string;
+  description_html?: string;
   takenAt: string;
   rotation: number;
   license: string;

@@ -8,12 +8,19 @@ import { Album } from './Album';
 import './reset.css';
 
 const GlobalStyle = createGlobalStyle`
+
+:root {
+  --background-color-dark: #191919;
+  --text-color-light: #f2f2f2;
+  --text-shadow: 0 1px 1px #000;
+}
 html {
-  background-color: #f3f5f6;
+  background-color: var(--background-color-dark);
 }
 body {
   font-family: 'Noto Sans', sans-serif;
-}`;
+}
+`;
 
 const AlbumsPage = () => <AlbumGallery />;
 const PhotosPage = () => <Photos />;

@@ -1,18 +1,16 @@
 type Album = {
   id: string;
   title: string;
-  description?: string;
-  description_html?: string;
   createdAt: string;
   cover?: string;
   photos: string[];
+  html?: string;
+  tags?: string[];
 };
 
 type Photo = {
   id: string;
   name: string;
-  description?: string;
-  description_html?: string;
   takenAt: string;
   rotation: number;
   license: string;
@@ -22,4 +20,5 @@ type Photo = {
   size: number;
   image: { width: number; height: number };
   contentType: string;
+  html?: string;
 };

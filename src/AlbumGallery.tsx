@@ -31,6 +31,8 @@ export const AlbumThumb = styled.div`
   }
   p {
     font-size: 14px;
+    font-family: var(--sans-font-family);
+    font-weight: var(--sans-normal-font-weight);
   }
   display: flex;
   flex-direction: column;
@@ -46,7 +48,11 @@ export const AlbumGallery = () => {
   useEffect(() => {
     fetch('/data/albums.json')
       .then((res) => res.json())
-      .then(setAlbums);
+      .then((albums: Record<string, Album>) =>
+        setAlbums(
+          Object.entries(albums).map(([id, album]) => ({ ...album, id })),
+        ),
+      );
   }, []);
 
   if (albums.length === 0) return <p>Loading ...</p>;
@@ -99,10 +105,10 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
         backgroundImage: cover ? `url(${thumb(250)(cover)})` : undefined,
       }}
       onClick={() => {
-        route(`/album/${encodeURIComponent(album.title)}-${id}`);
+        route(`/album/${encodeURIComponent(album.id)}`);
       }}
     >
-      <StyledLink href={`/album/${encodeURIComponent(album.title)}-${id}`}>
+      <StyledLink href={`/album/${encodeURIComponent(album.id)}`}>
         <h2>{album.title}</h2>
         <p>
           {album.photos.length} photos &middot;{' '}

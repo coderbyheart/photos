@@ -17,13 +17,23 @@ const Header = styled.header`
   justify-content: center;
   h1 {
     font-weight: normal;
-    font-size: 300%;
+    font-size: 400%;
+  }
+  > p {
+    font-family: var(--sans-font-family);
+  }
+  a {
+    color: inherit;
+    text-shadow: inherit;
   }
 `;
 
-const Description = styled.p``;
+const Description = styled.div`
+  margin-top: 1rem;
+  font-family: var(--serif-font-family);
+`;
 
-export const Album = ({ id }: { id: number }) => {
+export const Album = ({ id }: { id: string }) => {
   const [album, setAlbum] = useState<Album | undefined>(undefined);
   const [cover, setCover] = useState<Photo | undefined>(undefined);
   useEffect(() => {
@@ -59,10 +69,9 @@ export const Album = ({ id }: { id: number }) => {
           {format(new Date(album.createdAt), 'd. LLLL yyyy')} &middot;{' '}
           {album.photos.length} photos
         </p>
-        {album.description_html && (
-          <Description
-            dangerouslySetInnerHTML={{ __html: album.description_html }}
-          />
+        {album.tags && album.tags.map((tag, k) => <span key={k}>#{tag}</span>)}
+        {album.html && (
+          <Description dangerouslySetInnerHTML={{ __html: album.html }} />
         )}
       </Header>
       <Gallery>

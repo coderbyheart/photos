@@ -10,17 +10,9 @@ const toHTML = remark()
   .use(frontmatter, ['yaml'])
   .use(extract, { yaml: yaml });
 
-const updateIfChanged = async (source, target) => {
-  const sourceModified = (await fs.stat(source)).mtime;
-  let targetModified = -1;
-  try {
-    targetModified = (await fs.stat(target)).mtime;
-  } catch {}
-  if (targetModified >= sourceModified) return;
-  console.log(`Loading ${source} ...`);
-  const doc = await parse(await fs.readFile(source, 'utf-8'));
+const writeFile = async (target, data) => {
   console.log(`Writing ${target} ...`);
-  await fs.writeFile(target, JSON.stringify(doc), 'utf8');
+  return fs.writeFile(target, JSON.stringify(data), 'utf-8');
 };
 
 const parse = async (el) =>
@@ -40,8 +32,9 @@ module.exports = async function () {
   await fs.mkdir(dataFolder, {
     recursive: true,
   });
-  // Albums
+
   return Promise.all([
+    // Albums
     fs
       .readdir(path.join(process.cwd(), 'data', 'albums'))
       .then(async (files) => {
@@ -50,46 +43,86 @@ module.exports = async function () {
             .filter((s) => s.endsWith('.md'))
             .map(async (album) => ({
               slug: album.replace(/\.md$/, ''),
-              ...(await parse(
+              doc: await parse(
                 await fs.readFile(
                   path.join(process.cwd(), 'data', 'albums', album),
                   'utf-8',
                 ),
-              )),
+              ),
             })),
         );
-        await fs.writeFile(
+
+        albums.sort(({ doc: { createdAt: a } }, { doc: { createdAt: b } }) =>
+          b.localeCompare(a),
+        );
+
+        await writeFile(
           path.join(process.cwd(), 'data-js', `albums.json`),
-          JSON.stringify(
-            albums.reduce((albums, album) => {
-              const { slug, ...rest } = album;
-              return {
-                ...albums,
-                [slug]: rest,
-              };
-            }, {}),
-          ),
-          'utf-8',
+          albums.reduce((albums, album) => {
+            const { slug, doc } = album;
+            return {
+              ...albums,
+              [slug]: doc,
+            };
+          }, {}),
         );
       }),
+    // Photos
     fs
       .readdir(path.join(process.cwd(), 'data', 'photos'))
       .then(async (files) => {
         const photos = files.filter((s) => s.endsWith('.md'));
-        return Promise.all([
-          fs.writeFile(
-            path.join(process.cwd(), 'data-js', `stats.json`),
-            JSON.stringify({ photos: photos.length }),
-            'utf-8',
-          ),
-          ...photos.map(async (f) => {
+        await writeFile(path.join(process.cwd(), 'data-js', `stats.json`), {
+          photos: photos.length,
+        });
+        const photoDocs = await Promise.all(
+          photos.map(async (f) => {
             const p = path.parse(f);
-            return updateIfChanged(
-              path.join(process.cwd(), 'data', 'photos', f),
-              path.join(process.cwd(), 'data-js', 'photos', `${p.name}.json`),
+            const source = path.join(process.cwd(), 'data', 'photos', f);
+            const target = path.join(
+              process.cwd(),
+              'data-js',
+              'photos',
+              `${p.name}.json`,
             );
+            console.log(`Loading ${source}...`);
+            const doc = await parse(await fs.readFile(source, 'utf-8'));
+
+            const sourceModified = (await fs.stat(source)).mtime;
+            let targetModified = -1;
+            try {
+              targetModified = (await fs.stat(target)).mtime;
+            } catch {}
+            if (targetModified < sourceModified) {
+              console.log(`Writing ${target} ...`);
+              await writeFile(target, doc);
+            }
+            return { slug: path.parse(f).name, doc };
           }),
-        ]);
+        );
+        // Write paginated, sorted photos pages
+        photoDocs.sort(({ doc: { takenAt: a } }, { doc: { takenAt: b } }) =>
+          b.localeCompare(a),
+        );
+        console.log(photoDocs[0]);
+        const photoPages = photoDocs.reduce(
+          (chunks, { slug }) => {
+            if ((chunks[chunks.length - 1].length ?? 0) >= 50) {
+              chunks.push([]);
+            }
+            chunks[chunks.length - 1].push(slug);
+            return chunks;
+          },
+          [[]],
+        );
+        return Promise.all(
+          photoPages.map((page, k) =>
+            writeFile(
+              path.join(process.cwd(), 'data-js', `photos-takenAt-${k}.json`),
+              page,
+            ),
+          ),
+        );
       }),
   ]);
 };

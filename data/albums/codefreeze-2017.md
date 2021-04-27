@@ -207,4 +207,4 @@ photos:
   - '32590573305'
 ---
 
-[www.codefreeze.fi/](http://www.codefreeze.fi/)
+[codefreeze.fi](https://codefreeze.fi/)

@@ -2,6 +2,8 @@
 title: '#RheinMainRocks sticker'
 createdAt: '2015-05-20T08:28:11.000Z'
 cover: '17889782211'
+tags:
+  - RheinMainRocks
 photos:
   - '17889782211'
   - '17266724224'
@@ -12,3 +14,4 @@ photos:
   - '17889772361'
 ---
 
+[coderbyheart.com/rheinmainrocks-sticker](https://coderbyheart.com/rheinmainrocks-sticker)

@@ -1,7 +1,9 @@
 ---
-title: '#codefreeze 2018'
+title: 'Codefreeze 2018'
 createdAt: '2018-01-20T19:32:29.000Z'
 cover: '25929138398'
+tags:
+  - codefreeze
 photos:
   - '39801808951'
   - '39801806411'
@@ -98,4 +100,4 @@ photos:
   - '39801682021'
 ---
 
-[www.codefreeze.fi/](http://www.codefreeze.fi/)
+[codefreeze.fi](https://codefreeze.fi/)

@@ -1,7 +1,9 @@
 ---
-title: '#EuroTestConf 2019 Valencia'
+title: 'European Testing Conference 2019'
 createdAt: '2019-02-24T11:29:56.000Z'
 cover: '47195448081'
+tags:
+  - EuroTestConf
 photos:
   - '47195448081'
   - '33320049758'
@@ -60,3 +62,4 @@ photos:
   - '40230849173'
 ---
 
+[European Testing Conference 2019](https://europeantestingconference.eu/2019/) in Valencia, Spain

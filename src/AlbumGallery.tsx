@@ -6,7 +6,6 @@ import { thumb } from './contentful';
 import { Link, route } from 'preact-router';
 
 export const Gallery = styled.section`
-  --grid-gap: 16px;
   display: grid;
   grid-gap: var(--grid-gap);
   margin: var(--grid-gap);

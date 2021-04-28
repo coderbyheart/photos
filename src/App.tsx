@@ -17,6 +17,7 @@ const GlobalStyle = createGlobalStyle`
   --sans-font-family: 'Roboto', serif;
   --sans-normal-font-weight: 300;
   --sans-thin-font-weight: 100;
+  --grid-gap: 16px;
 }
 html {
   background-color: var(--background-color-dark);
@@ -33,7 +34,13 @@ body {
 
 const AlbumsPage = () => <AlbumGallery />;
 const PhotosPage = () => <Photos />;
-const AlbumPage = ({ id }: { id: string }) => <Album id={id} />;
+const AlbumPage = ({
+  albumId,
+  photoId,
+}: {
+  albumId: string;
+  photoId?: string;
+}) => <Album albumId={albumId} photoId={photoId} />;
 
 export const App = () => {
   return (
@@ -42,7 +49,8 @@ export const App = () => {
       <Router>
         <Route path="/" component={AlbumsPage} />
         <Route path="/photos" component={PhotosPage} />
-        <Route path="/album/:id" component={AlbumPage} />
+        <Route path="/album/:albumId" component={AlbumPage} />
+        <Route path="/album/:albumId/photo/:photoId" component={AlbumPage} />
       </Router>
     </Fragment>
   );

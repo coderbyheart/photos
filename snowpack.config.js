@@ -9,7 +9,6 @@ module.exports = {
     '@prefresh/snowpack',
     '@snowpack/plugin-dotenv',
     ['@snowpack/plugin-typescript'],
-    './load-data.plugin.js',
   ],
   alias: {
     react: 'preact/compat',

@@ -5,8 +5,8 @@
   "author": "Markus Tacker <m@coderbyheart.com> | https://coderbyheart.com",
   "license": "MIT",
   "scripts": {
-    "start": "snowpack dev",
-    "build": "snowpack build"
+    "start": "node load-data.js && snowpack dev",
+    "build": "node load-data.js && snowpack build"
   },
   "dependencies": {
     "date-fns": "*",

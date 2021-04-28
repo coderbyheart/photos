@@ -6,25 +6,30 @@ import { thumb } from './contentful';
 import { Link, route } from 'preact-router';
 
 export const Gallery = styled.section`
+  --grid-gap: 16px;
   display: grid;
-  grid-template: 98vw / 98vw;
-  grid-auto-rows: 98vw;
-  @media (min-width: 500px) {
-    grid-template: 29vw / repeat(auto-fill, 29vw);
-    grid-auto-rows: 29vw;
-  }
-  @media (min-width: 1000px) {
-    grid-template: 250px / repeat(auto-fill, 250px);
-    grid-auto-rows: 250px;
-  }
-  grid-gap: 1vw;
-  margin: 1vw;
+  grid-gap: var(--grid-gap);
+  margin: var(--grid-gap);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 `;
 export const AlbumThumb = styled.div`
+  &:after {
+    content: '';
+    display: block;
+    padding-bottom: 100%;
+  }
   background-size: cover;
+
+  position: relative;
+  cursor: pointer;
+`;
+const Info = styled.div`
+  position: absolute;
   color: white;
   text-shadow: var(--text-shadow);
-  padding: 1vw;
+  padding: var(--grid-gap);
+  bottom: 0;
+  left: 0;
   h2 {
     font-weight: normal;
     font-size: 18px;
@@ -34,9 +39,6 @@ export const AlbumThumb = styled.div`
     font-family: var(--sans-font-family);
     font-weight: var(--sans-normal-font-weight);
   }
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
 `;
 const StyledLink = styled(Link)`
   color: white;
@@ -109,11 +111,13 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
       }}
     >
       <StyledLink href={`/album/${encodeURIComponent(album.id)}`}>
-        <h2>{album.title}</h2>
-        <p>
-          {album.photos.length} photos &middot;{' '}
-          {format(new Date(album.createdAt), 'd. LLLL yyyy')}
-        </p>
+        <Info>
+          <h2>{album.title}</h2>
+          <p>
+            {album.photos.length} photos &middot;{' '}
+            {format(new Date(album.createdAt), 'd. LLLL yyyy')}
+          </p>
+        </Info>
       </StyledLink>
     </AlbumThumb>
   );

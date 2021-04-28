@@ -13,11 +13,21 @@ const Header = styled.header`
   align-content: center;
   align-items: center;
   background-size: cover;
+  background-position: 50% 50%;
   min-height: 500px;
   justify-content: center;
+  text-align: center;
   h1 {
     font-weight: normal;
-    font-size: 400%;
+    font-size: 20px;
+    @media (min-width: 500px) {
+      font-size: 30px;
+    }
+
+    @media (min-width: 1000px) {
+      font-size: 40px;
+    }
+    margin: 2rem;
   }
   > p {
     font-family: var(--sans-font-family);
@@ -29,7 +39,7 @@ const Header = styled.header`
 `;
 
 const Description = styled.div`
-  margin-top: 1rem;
+  margin: 1rem;
   font-family: var(--serif-font-family);
 `;
 

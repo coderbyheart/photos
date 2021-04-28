@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
 :root {
   --background-color-dark: #191919;
   --text-color-light: #f2f2f2;
-  --text-shadow: 0 1px 1px #000;
+  --text-shadow: -1px 1px 2px #00000099, 1px 1px 2px #00000099, 1px -1px 2px #00000099, -1px -1px 2px #00000099;
   --serif-font-family: 'Roboto Slab', serif;
   --sans-font-family: 'Roboto', serif;
   --sans-normal-font-weight: 300;

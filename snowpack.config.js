@@ -3,7 +3,7 @@ module.exports = {
   mount: {
     public: { url: '/', static: true },
     src: { url: '/dist' },
-    'data-js': { url: '/data' },
+    'data-js': { url: '/data', static: true, resolve: false },
   },
   plugins: [
     '@prefresh/snowpack',

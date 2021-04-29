@@ -2,26 +2,23 @@ import { h } from 'preact';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { sized } from './contentful';
 import styled from 'styled-components';
-
-import CloseIcon from './x.svg';
-import NextIcon from './chevron-right.svg';
-import PrevIcon from './chevron-left.svg';
+import { X as CloseIcon } from './icons/X';
+import { ChevronLeft as PrevIcon } from './icons/ChevronLeft';
+import { ChevronRight as NextIcon } from './icons/ChevronRight';
 
 const Dim = styled.div`
   display: flex;
   position: relative;
   height: 100vh;
   width: 100%;
-  @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
-    width: calc(100vw - 2 * var(--grid-gap));
-    height: calc(100vh - 2 * var(--grid-gap));
-    margin: var(--grid-gap) var(--grid-gap) 0 var(--grid-gap);
-  }
+  justify-content: center;
+  align-items: center;
 `;
 const Fullscreen = styled.div`
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
+    height: calc(100vh - var(--grid-gap));
     width: calc(100vw - 3 * var(--grid-gap));
   }
   background-position: 50% 50%;
@@ -56,6 +53,10 @@ const Button = styled.button`
   position: absolute;
   top: 0;
   right: 0;
+
+  @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
+    right: 1rem;
+  }
   padding: 0;
   border: 0;
   background: transparent;

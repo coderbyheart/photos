@@ -1,6 +1,6 @@
 import { Fragment, h } from 'preact';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
-import { thumb, header, fullsize } from './contentful';
+import { thumb, sized } from './contentful';
 import { Gallery, AlbumThumb } from './AlbumGallery';
 import { format } from 'date-fns';
 import styled from 'styled-components';
@@ -16,17 +16,20 @@ const Header = styled.header`
   align-items: center;
   background-size: cover;
   background-position: 50% 50%;
-  min-height: 500px;
+  min-height: 100vw;
+  @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
+    height: 500px;
+    min-height: auto;
+  }
   justify-content: center;
   text-align: center;
   h1 {
     font-weight: normal;
     font-size: 20px;
-    @media (min-width: 500px) {
+    @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
       font-size: 30px;
     }
-
-    @media (min-width: 1000px) {
+    @media (min-width: ${(props) => props.theme.desktopBreakpoint}) {
       font-size: 40px;
     }
     margin: 2rem;
@@ -37,6 +40,13 @@ const Header = styled.header`
   a {
     color: inherit;
     text-shadow: inherit;
+  }
+  &:after {
+    content: ' ';
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, rgb(25 25 25) 0%, rgb(25 25 25 / 0%) 50%);
+    position: absolute;
   }
 `;
 
@@ -54,6 +64,7 @@ export const Album = ({
 }) => {
   const [album, setAlbum] = useState<Album | undefined>(undefined);
   const [cover, setCover] = useState<Photo | undefined>(undefined);
+  const el = useRef<HTMLHeadElement>(null);
   useEffect(() => {
     fetch('/data/albums.json')
       .then((res) => res.json())
@@ -80,8 +91,14 @@ export const Album = ({
     <Fragment>
       {photoId === undefined && (
         <Header
+          ref={el}
           style={{
-            backgroundImage: cover ? `url(${header(cover)})` : undefined,
+            backgroundImage: cover
+              ? `url(${sized({
+                  width: window.innerWidth,
+                  height: window.innerHeight,
+                })(cover)})`
+              : undefined,
           }}
         >
           <h1>{album.title}</h1>
@@ -164,7 +181,7 @@ const PhotoNavigator = ({
           // Preload next image
           fetch(`/data/photos/${getNextPhotoId(2)}.json`)
             .then((res) => res.json())
-            .then(({ url }) => fetch(fullsize(size)({ url })));
+            .then(({ url }) => fetch(sized(size)({ url })));
         }}
         onClose={onClose}
       />

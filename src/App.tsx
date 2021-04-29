@@ -2,10 +2,15 @@ import { h, Fragment } from 'preact';
 import { AlbumGallery } from './AlbumGallery';
 import { Router, Route } from 'preact-router';
 import { Photos } from './Photos';
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { Album } from './Album';
 
 import './reset.css';
+
+const theme = {
+  mobileBreakpoint: '500px',
+  desktopBreakpoint: '1000px',
+};
 
 const GlobalStyle = createGlobalStyle`
 
@@ -18,13 +23,15 @@ const GlobalStyle = createGlobalStyle`
   --sans-normal-font-weight: 300;
   --sans-thin-font-weight: 100;
   --grid-gap: 16px;
+  --mobile-breakpoint: ${theme.mobileBreakpoint};
+  --desktop-breakpoint: ${theme.desktopBreakpoint};
 }
 html {
   background-color: var(--background-color-dark);
 }
 body {
   font-family: var(--serif-font-family);
-  font-size: 20px;
+  font-size: 16px;
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--sans-font-family);
     font-weight: var(--sans-thin-font-weight);
@@ -44,7 +51,7 @@ const AlbumPage = ({
 
 export const App = () => {
   return (
-    <Fragment>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Router>
         <Route path="/" component={AlbumsPage} />
@@ -52,6 +59,6 @@ export const App = () => {
         <Route path="/album/:albumId" component={AlbumPage} />
         <Route path="/album/:albumId/photo/:photoId" component={AlbumPage} />
       </Router>
-    </Fragment>
+    </ThemeProvider>
   );
 };

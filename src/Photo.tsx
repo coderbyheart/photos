@@ -1,18 +1,29 @@
 import { h } from 'preact';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
-import { fullsize } from './contentful';
+import { sized } from './contentful';
 import styled from 'styled-components';
 
+import CloseIcon from './x.svg';
+import NextIcon from './chevron-right.svg';
+import PrevIcon from './chevron-left.svg';
+
 const Dim = styled.div`
-  width: calc(100vw - 2 * var(--grid-gap));
-  height: calc(100vh - 2 * var(--grid-gap));
   display: flex;
-  margin: var(--grid-gap) var(--grid-gap) 0 var(--grid-gap);
   position: relative;
+  height: 100vh;
+  width: 100%;
+  @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
+    width: calc(100vw - 2 * var(--grid-gap));
+    height: calc(100vh - 2 * var(--grid-gap));
+    margin: var(--grid-gap) var(--grid-gap) 0 var(--grid-gap);
+  }
 `;
 const Fullscreen = styled.div`
   height: 100%;
-  width: calc(100vw - 3 * var(--grid-gap));
+  width: 100%;
+  @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
+    width: calc(100vw - 3 * var(--grid-gap));
+  }
   background-position: 50% 50%;
   background-repeat: no-repeat;
 `;
@@ -21,14 +32,34 @@ const PrevNav = styled.div`
   width: 50%;
   height: 100%;
   left: 0;
-  cursor: pointer;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  color: white;
+  svg {
+    display: none;
+  }
+  &:hover {
+    svg {
+      display: inline-block;
+      opacity: 50%;
+    }
+  }
 `;
-const NextNav = styled.div`
-  position: absolute;
-  width: 50%;
-  height: 100%;
+const NextNav = styled(PrevNav)`
+  left: auto;
   right: 0;
-  cursor: pointer;
+  justify-content: flex-end;
+`;
+const Button = styled.button`
+  color: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 50%;
 `;
 
 export const Photo = ({
@@ -69,7 +100,7 @@ export const Photo = ({
       .then((p) => {
         setPhoto({ ...p, id });
         setPhotoSrc(
-          fullsize({
+          sized({
             width: window.innerWidth,
             height: window.innerHeight,
           })({ ...p, id }),
@@ -99,8 +130,15 @@ export const Photo = ({
           backgroundImage: photoSrc ? `url(${photoSrc})` : undefined,
         }}
       />
-      <PrevNav onClick={() => onPrev?.()} />
-      <NextNav onClick={() => onNext?.()} />
+      <PrevNav onClick={() => onPrev?.()}>
+        <PrevIcon />
+      </PrevNav>
+      <NextNav onClick={() => onNext?.()}>
+        <NextIcon />
+      </NextNav>
+      <Button onClick={() => onClose?.()}>
+        <CloseIcon />
+      </Button>
     </Dim>
   );
 };

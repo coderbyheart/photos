@@ -5,10 +5,7 @@ export const thumb = (size: number) => ({
 }): string =>
   `${{ url: string }.url}?fm=webp&fit=thumb&w=${size}&h=${size}&q=75`;
 
-export const header = ({ url: string }: { url: string }): string =>
-  `${{ url: string }.url}?fm=webp&fit=thumb&w=1024&h=250&q=75`;
-
-export const fullsize = ({
+export const sized = ({
   width,
   height,
 }: {

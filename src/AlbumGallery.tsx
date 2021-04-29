@@ -2,14 +2,19 @@ import { format } from 'date-fns';
 import { h } from 'preact';
 import { useEffect, useRef, useState, useLayoutEffect } from 'preact/hooks';
 import styled from 'styled-components';
-import { thumb } from './contentful';
+import { sized } from './contentful';
 import { Link, route } from 'preact-router';
 
 export const Gallery = styled.section`
   display: grid;
-  grid-gap: var(--grid-gap);
-  margin: var(--grid-gap);
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
+    grid-gap: var(--grid-gap);
+    margin: var(--grid-gap);
+  }
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(calc(var(--mobile-breakpoint) / 2), 1fr)
+  );
 `;
 export const AlbumThumb = styled.div`
   &:after {
@@ -103,7 +108,12 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
     <AlbumThumb
       ref={el}
       style={{
-        backgroundImage: cover ? `url(${thumb(250)(cover)})` : undefined,
+        backgroundImage: cover
+          ? `url(${sized({
+              width: el.current?.clientWidth,
+              height: el.current?.clientHeight,
+            })(cover)})`
+          : undefined,
       }}
       onClick={() => {
         route(`/album/${encodeURIComponent(album.id)}`);

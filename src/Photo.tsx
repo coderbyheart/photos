@@ -6,7 +6,7 @@ import { X as CloseIcon } from './icons/X';
 import { ChevronLeft as PrevIcon } from './icons/ChevronLeft';
 import { ChevronRight as NextIcon } from './icons/ChevronRight';
 
-const Dim = styled.div`
+export const Dim = styled.div`
   display: flex;
   position: relative;
   height: 100vh;
@@ -32,7 +32,7 @@ const PrevNav = styled.div`
   display: flex;
   align-content: center;
   align-items: center;
-  color: white;
+  color: var(--text-color-light);
   svg {
     display: none;
   }
@@ -49,7 +49,7 @@ const NextNav = styled(PrevNav)`
   justify-content: flex-end;
 `;
 const Button = styled.button`
-  color: white;
+  color: var(--text-color-light);
   position: absolute;
   top: 0;
   right: 0;
@@ -102,8 +102,8 @@ export const Photo = ({
         setPhoto({ ...p, id });
         setPhotoSrc(
           sized({
-            width: window.innerWidth,
-            height: window.innerHeight,
+            width: document.documentElement.clientWidth,
+            height: document.documentElement.clientHeight,
           })({ ...p, id }),
         );
       })
@@ -116,8 +116,8 @@ export const Photo = ({
     if (photoSrc === undefined) return;
     fetch(photoSrc).then(() =>
       onLoad?.({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight,
       }),
     );
   }, [photoSrc]);

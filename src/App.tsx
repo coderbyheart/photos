@@ -4,6 +4,7 @@ import { Router, Route } from 'preact-router';
 import { Photos } from './Photos';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { Album } from './Album';
+import { Navigation } from './Navigation';
 
 import './reset.css';
 
@@ -16,12 +17,14 @@ const GlobalStyle = createGlobalStyle`
 
 :root {
   --background-color-dark: #191919;
-  --text-color-light: #f2f2f2;
+  --text-color-light: #ffffffd9;
   --text-shadow: -1px 1px 2px #00000099, 1px 1px 2px #00000099, 1px -1px 2px #00000099, -1px -1px 2px #00000099;
-  --serif-font-family: 'Roboto Slab', serif;
-  --sans-font-family: 'Roboto', serif;
-  --sans-normal-font-weight: 300;
-  --sans-thin-font-weight: 100;
+  --headline-font-family: 'Raleway', serif;
+  --headline-normal-font-weight: 500;
+  --headline-thin-font-weight: 100;
+  --headline-bold-font-weight: 700;
+  --text-font-family: 'Roboto', serif;
+  --text-normal-font-weight: 400;
   --grid-gap: 16px;
   --mobile-breakpoint: ${theme.mobileBreakpoint};
   --desktop-breakpoint: ${theme.desktopBreakpoint};
@@ -30,34 +33,51 @@ html {
   background-color: var(--background-color-dark);
 }
 body {
-  font-family: var(--serif-font-family);
+  font-family: var(--headline-font-family);
   font-size: 16px;
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--sans-font-family);
-    font-weight: var(--sans-thin-font-weight);
+    font-family: var(--headline-font-family);
+    font-weight: var(--headline-thin-font-weight);
   }
 }
 `;
 
-const AlbumsPage = () => <AlbumGallery />;
-const PhotosPage = () => <Photos />;
-const AlbumPage = ({
+const AlbumsPage = () => (
+  <Fragment>
+    <Navigation />
+    <AlbumGallery />
+  </Fragment>
+);
+const PhotosPage = () => (
+  <Fragment>
+    <Navigation />
+    <Photos />
+  </Fragment>
+);
+const AlbumPage = ({ albumId }: { albumId: string }) => (
+  <Fragment>
+    <Navigation />
+    <Album albumId={albumId} />
+  </Fragment>
+);
+const PhotoPage = ({
   albumId,
   photoId,
 }: {
   albumId: string;
-  photoId?: string;
+  photoId: string;
 }) => <Album albumId={albumId} photoId={photoId} />;
 
 export const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
+
       <Router>
         <Route path="/" component={AlbumsPage} />
         <Route path="/photos" component={PhotosPage} />
         <Route path="/album/:albumId" component={AlbumPage} />
-        <Route path="/album/:albumId/photo/:photoId" component={AlbumPage} />
+        <Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
       </Router>
     </ThemeProvider>
   );

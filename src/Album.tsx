@@ -5,7 +5,7 @@ import { Gallery, AlbumThumb } from './AlbumGallery';
 import { format } from 'date-fns';
 import styled from 'styled-components';
 import { route } from 'preact-router';
-import { Photo } from './Photo';
+import { Photo, Dim } from './Photo';
 
 const Header = styled.header`
   display: flex;
@@ -17,6 +17,7 @@ const Header = styled.header`
   background-size: cover;
   background-position: 50% 50%;
   min-height: 100vw;
+  width: 100%;
   @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
     height: 500px;
     min-height: auto;
@@ -35,24 +36,37 @@ const Header = styled.header`
     margin: 2rem;
   }
   > p {
-    font-family: var(--sans-font-family);
+    font-family: var(--text-font-family);
   }
   a {
     color: inherit;
     text-shadow: inherit;
   }
-  &:after {
-    content: ' ';
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, rgb(25 25 25) 0%, rgb(25 25 25 / 0%) 50%);
-    position: absolute;
+  position: relative;
+`;
+
+const Gradient = styled.div`
+  content: ' ';
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgb(25 25 25) 10%, rgb(25 25 25 / 0%) 60%);
+  position: absolute;
+`;
+
+const StyledGallery = styled(Gallery)`
+  margin-top: -10%;
+  ${Dim} + & {
+    margin-top: 0;
   }
 `;
 
 const Description = styled.div`
   margin: 1rem;
-  font-family: var(--serif-font-family);
+  font-family: var(--headline-font-family);
+`;
+
+const DescriptionSection = styled.section`
+  position: absolute;
 `;
 
 export const Album = ({
@@ -95,22 +109,25 @@ export const Album = ({
           style={{
             backgroundImage: cover
               ? `url(${sized({
-                  width: window.innerWidth,
-                  height: window.innerHeight,
+                  width: document.documentElement.clientWidth,
+                  height: document.documentElement.clientHeight,
                 })(cover)})`
               : undefined,
           }}
         >
-          <h1>{album.title}</h1>
-          <p>
-            {format(new Date(album.createdAt), 'd. LLLL yyyy')} &middot;{' '}
-            {album.photos.length} photos
-          </p>
-          {album.tags &&
-            album.tags.map((tag, k) => <span key={k}>#{tag}</span>)}
-          {album.html && (
-            <Description dangerouslySetInnerHTML={{ __html: album.html }} />
-          )}
+          <Gradient />
+          <DescriptionSection>
+            <h1>{album.title}</h1>
+            <p>
+              {format(new Date(album.createdAt), 'd. LLLL yyyy')} &middot;{' '}
+              {album.photos.length} photos
+            </p>
+            {album.tags &&
+              album.tags.map((tag, k) => <span key={k}>#{tag}</span>)}
+            {album.html && (
+              <Description dangerouslySetInnerHTML={{ __html: album.html }} />
+            )}
+          </DescriptionSection>
         </Header>
       )}
       {photoId && (
@@ -122,7 +139,7 @@ export const Album = ({
           }}
         />
       )}
-      <Gallery>
+      <StyledGallery>
         {album.photos.map((photoId, k) => (
           <PhotoThumb
             id={photoId}
@@ -137,7 +154,7 @@ export const Album = ({
             }}
           />
         ))}
-      </Gallery>
+      </StyledGallery>
     </Fragment>
   );
 };
@@ -156,36 +173,34 @@ const PhotoNavigator = ({
       (album.photos.indexOf(photoId) + increment) % album.photos.length
     ];
   return (
-    <Fragment>
-      <Photo
-        id={photoId}
-        onPrev={() => {
-          let k = album.photos.indexOf(photoId) - 1;
-          if (k < 0) k = album.photos.length - 1;
-          route(
-            `/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
-              album.photos[k],
-            )}`,
-          );
-          window.scrollTo({ top: 0 });
-        }}
-        onNext={() => {
-          route(
-            `/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
-              getNextPhotoId(),
-            )}`,
-          );
-          window.scrollTo({ top: 0 });
-        }}
-        onLoad={(size) => {
-          // Preload next image
-          fetch(`/data/photos/${getNextPhotoId(2)}.json`)
-            .then((res) => res.json())
-            .then(({ url }) => fetch(sized(size)({ url })));
-        }}
-        onClose={onClose}
-      />
-    </Fragment>
+    <Photo
+      id={photoId}
+      onPrev={() => {
+        let k = album.photos.indexOf(photoId) - 1;
+        if (k < 0) k = album.photos.length - 1;
+        route(
+          `/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
+            album.photos[k],
+          )}`,
+        );
+        window.scrollTo({ top: 0 });
+      }}
+      onNext={() => {
+        route(
+          `/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
+            getNextPhotoId(),
+          )}`,
+        );
+        window.scrollTo({ top: 0 });
+      }}
+      onLoad={(size) => {
+        // Preload next image
+        fetch(`/data/photos/${getNextPhotoId(2)}.json`)
+          .then((res) => res.json())
+          .then(({ url }) => fetch(sized(size)({ url })));
+      }}
+      onClose={onClose}
+    />
   );
 };
 

@@ -29,7 +29,7 @@ export const AlbumThumb = styled.div`
 `;
 const Info = styled.div`
   position: absolute;
-  color: white;
+  color: var(--text-color-light);
   text-shadow: var(--text-shadow);
   padding: var(--grid-gap);
   bottom: 0;
@@ -40,12 +40,12 @@ const Info = styled.div`
   }
   p {
     font-size: 14px;
-    font-family: var(--sans-font-family);
-    font-weight: var(--sans-normal-font-weight);
+    font-family: var(--text-font-family);
+    font-weight: var(--headline-normal-font-weight);
   }
 `;
 const StyledLink = styled(Link)`
-  color: white;
+  color: var(--text-color-light);
   text-decoration: none;
 `;
 

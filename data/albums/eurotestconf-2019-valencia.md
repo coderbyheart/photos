@@ -2,8 +2,6 @@
 title: 'European Testing Conference 2019'
 createdAt: '2019-02-24T11:29:56.000Z'
 cover: '47195448081'
-tags:
-  - EuroTestConf
 photos:
   - '47195448081'
   - '33320049758'

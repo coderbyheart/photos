@@ -5,17 +5,16 @@ type Album = {
   cover?: string;
   photos: string[];
   html?: string;
-  tags?: string[];
 };
 
 type Photo = {
   id: string;
-  name: string;
+  title: string;
   takenAt: string;
   rotation: number;
-  license: string;
+  license: 'CC0' | 'CC BY-ND 3.0' | 'CC BY-SA 4.0' | 'None';
   geo?: { lat: number; lng: number };
-  tags: string[];
+  tags?: string[];
   url: string;
   size: number;
   image: { width: number; height: number };

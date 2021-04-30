@@ -2,8 +2,6 @@
 title: 'Codefreeze 2020'
 createdAt: '2020-01-20T08:43:15.000Z'
 cover: '49412796993'
-tags:
-  - codefreeze
 photos:
   - '49412796993'
   - '49413624346'

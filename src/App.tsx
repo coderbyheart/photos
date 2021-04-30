@@ -28,12 +28,14 @@ const GlobalStyle = createGlobalStyle`
   --grid-gap: 16px;
   --mobile-breakpoint: ${theme.mobileBreakpoint};
   --desktop-breakpoint: ${theme.desktopBreakpoint};
+  --content-max-width: 700px;
 }
 html {
   background-color: var(--background-color-dark);
 }
 body {
-  font-family: var(--headline-font-family);
+  font-family: var(--text-font-family);
+  font-weight: var(--text-normal-font-weight);
   font-size: 16px;
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--headline-font-family);
@@ -53,6 +55,9 @@ const PhotosPage = () => (
     <Navigation />
     <Photos />
   </Fragment>
+);
+const SinglePhotoPage = ({ photoId }: { photoId: string }) => (
+  <Photos photoId={photoId} />
 );
 const AlbumPage = ({ albumId }: { albumId: string }) => (
   <Fragment>
@@ -76,6 +81,7 @@ export const App = () => {
       <Router>
         <Route path="/" component={AlbumsPage} />
         <Route path="/photos" component={PhotosPage} />
+        <Route path="/photo/:photoId" component={SinglePhotoPage} />
         <Route path="/album/:albumId" component={AlbumPage} />
         <Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
       </Router>

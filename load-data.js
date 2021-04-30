@@ -21,14 +21,13 @@ const parse = async (el) =>
       if (err !== undefined && err !== null) return reject(err);
       return resolve({
         ...file.data,
-        html: file.contents,
+        html: file.contents.length > 0 ? file.contents : undefined,
       });
     }),
   );
 
 const main = async () => {
   const dataFolder = path.join(process.cwd(), 'data-js', 'photos');
-  console.log(dataFolder);
   await fs.mkdir(dataFolder, {
     recursive: true,
   });

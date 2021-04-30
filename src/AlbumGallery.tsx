@@ -7,14 +7,15 @@ import { Link, route } from 'preact-router';
 
 export const Gallery = styled.section`
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   @media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
     grid-gap: var(--grid-gap);
     margin: var(--grid-gap);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(calc(var(--mobile-breakpoint) / 2), 1fr)
+    );
   }
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(calc(var(--mobile-breakpoint) / 2), 1fr)
-  );
 `;
 export const AlbumThumb = styled.div`
   &:after {
@@ -35,13 +36,11 @@ const Info = styled.div`
   bottom: 0;
   left: 0;
   h2 {
-    font-weight: normal;
     font-size: 18px;
+    font-weight: var(--headline-normal-font-weight);
   }
   p {
     font-size: 14px;
-    font-family: var(--text-font-family);
-    font-weight: var(--headline-normal-font-weight);
   }
 `;
 const StyledLink = styled(Link)`

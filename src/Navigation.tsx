@@ -7,6 +7,7 @@ const Header = styled.header`
   font-size: 12px;
   font-family: var(--headline-font-family);
   font-weight: var(--headline-normal-font-weight);
+  padding: 0 1rem;
   h1 {
     font-size: inherit;
     font-weight: inherit;
@@ -23,7 +24,7 @@ const Header = styled.header`
     > a + a {
       :before {
         content: '·';
-        padding: 1rem;
+        padding: 0.5rem;
       }
     }
   }
@@ -31,7 +32,7 @@ const Header = styled.header`
     display: flex;
     justify-content: space-between;
     margin: 1rem auto;
-    max-width: 700px;
+    max-width: var(--content-max-width);
   }
 `;
 
@@ -48,6 +49,7 @@ export const Navigation = () => (
       <nav>
         <Link href="/">Albums</Link>
         <Link href="/photos">All photos</Link>
+        <Link href="/map">Map</Link>
       </nav>
     </section>
   </Header>

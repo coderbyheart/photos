@@ -5,7 +5,7 @@ import { Gallery, AlbumThumb } from './AlbumGallery';
 import { format } from 'date-fns';
 import styled from 'styled-components';
 import { route } from 'preact-router';
-import { Photo, Dim } from './Photo';
+import { Photo, PhotoEl } from './Photo';
 
 const Header = styled.header`
   display: flex;
@@ -55,14 +55,13 @@ const Gradient = styled.div`
 
 const StyledGallery = styled(Gallery)`
   margin-top: -10%;
-  ${Dim} + & {
+  ${PhotoEl} + & {
     margin-top: 0;
   }
 `;
 
 const Description = styled.div`
   margin: 1rem;
-  font-family: var(--headline-font-family);
 `;
 
 const DescriptionSection = styled.section`
@@ -122,8 +121,6 @@ export const Album = ({
               {format(new Date(album.createdAt), 'd. LLLL yyyy')} &middot;{' '}
               {album.photos.length} photos
             </p>
-            {album.tags &&
-              album.tags.map((tag, k) => <span key={k}>#{tag}</span>)}
             {album.html && (
               <Description dangerouslySetInnerHTML={{ __html: album.html }} />
             )}
@@ -204,7 +201,7 @@ const PhotoNavigator = ({
   );
 };
 
-const PhotoThumb = ({
+export const PhotoThumb = ({
   id,
   onClick,
 }: {

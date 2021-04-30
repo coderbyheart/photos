@@ -2,8 +2,6 @@
 title: 'Codefreeze 2018'
 createdAt: '2018-01-20T19:32:29.000Z'
 cover: '25929138398'
-tags:
-  - codefreeze
 photos:
   - '39801808951'
   - '39801806411'

@@ -51,6 +51,20 @@ export const License = ({ photo }: { photo: Photo }) => (
               license.
             </p>
           );
+        case 'CC BY-ND 4.0':
+          return (
+            <p>
+              Licensed under the{' '}
+              <a
+                href={'https://creativecommons.org/licenses/by-nd/4.0/'}
+                target={'blank'}
+                rel={'noreferrer noopener'}
+              >
+                Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)
+              </a>{' '}
+              license.
+            </p>
+          );
         case 'CC BY-SA 4.0':
           return (
             <p>

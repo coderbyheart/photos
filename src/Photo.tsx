@@ -186,7 +186,6 @@ export const Photo = ({
             </a>
           </p>
         )}
-        <License photo={photo} />
         {photo.license !== 'None' && (
           <p>
             <a title={'Download'} href={photo.url} target={'blank'}>
@@ -196,6 +195,7 @@ export const Photo = ({
             </a>
           </p>
         )}
+        <License photo={photo} />
       </Info>
     </PhotoEl>
   );

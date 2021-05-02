@@ -20,4 +20,8 @@ type Photo = {
   image: { width: number; height: number };
   contentType: string;
   html?: string;
+  photographer?: {
+    name: string;
+    url?: string;
+  };
 };

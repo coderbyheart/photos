@@ -6,10 +6,9 @@ const StyledLicense = styled.div`
   margin-top: 1rem;
 `;
 
-export const License = ({ photo }: { photo: Photo }) => (
-  <StyledLicense>
-    <p>
-      Photo <em>{photo.title}</em> by{' '}
+const Photographer = ({ photo }: { photo: Photo }) => {
+  if (photo.photographer === undefined)
+    return (
       <a
         href={'https://coderbyheart.com/'}
         target={'blank'}
@@ -17,7 +16,24 @@ export const License = ({ photo }: { photo: Photo }) => (
       >
         Markus Tacker
       </a>
-      .
+    );
+  if (photo.photographer.url === undefined)
+    return <span>{photo.photographer.name}</span>;
+  return (
+    <a
+      href={photo.photographer.url}
+      target={'blank'}
+      rel={'noreferrer noopener'}
+    >
+      {photo.photographer.name}
+    </a>
+  );
+};
+
+export const License = ({ photo }: { photo: Photo }) => (
+  <StyledLicense>
+    <p>
+      Photo <em>{photo.title}</em> by <Photographer photo={photo} />.
     </p>
     {(() => {
       switch (photo.license) {
@@ -63,15 +79,11 @@ export const License = ({ photo }: { photo: Photo }) => (
             </a>
             .
           </p>;
-        case 'None':
-        default:
-          return (
-            <p>
-              © {new Date(photo.takenAt).getFullYear()} Markus Tacker. All
-              rights reserved.
-            </p>
-          );
       }
     })()}
+    <p>
+      © {new Date(photo.takenAt).getFullYear()} <Photographer photo={photo} />.
+      All rights reserved.
+    </p>
   </StyledLicense>
 );

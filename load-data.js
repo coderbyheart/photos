@@ -74,6 +74,7 @@ const main = async () => {
         await writeFile(path.join(process.cwd(), 'data-js', `stats.json`), {
           photos: photos.length,
         });
+        const tags = {};
         const photoDocs = await Promise.all(
           photos.map(async (f) => {
             const p = path.parse(f);
@@ -86,7 +87,14 @@ const main = async () => {
             );
             console.debug(`Loading ${source}...`);
             const doc = await parse(await fs.readFile(source, 'utf-8'));
-
+            const slug = path.parse(f).name;
+            doc.tags?.map((tag) => {
+              if (tags[tag] === undefined) {
+                tags[tag] = [slug];
+              } else {
+                tags[tag].push(slug);
+              }
+            });
             const sourceModified = (await fs.stat(source)).mtime;
             let targetModified = -1;
             try {
@@ -96,7 +104,7 @@ const main = async () => {
               console.debug(`Writing ${target} ...`);
               await writeFile(target, doc);
             }
-            return { slug: path.parse(f).name, doc };
+            return { slug, doc };
           }),
         );
         // Write paginated, sorted photos pages
@@ -120,6 +128,28 @@ const main = async () => {
               page,
             ),
           ),
+        );
+        // Write tag pages
+        await Promise.all(
+          Object.entries(tags)
+            .filter(([, v]) => v > 1)
+            .map(([tag, slugs]) =>
+              writeFile(
+                path.join(
+                  process.cwd(),
+                  'data-js',
+                  `photos-tags-${encodeURIComponent(tag)}.json`,
+                ),
+                slugs,
+              ),
+            ),
+        );
+        await writeFile(
+          path.join(process.cwd(), 'data-js', `photos-tags.json`),
+          Object.entries(tags)
+            .sort(([, v1], [, v2]) => v2.length - v1.length)
+            .filter(([, v]) => v > 1)
+            .reduce((t, [k, v]) => ({ ...t, [k]: v.length })),
         );
       }),
   ]);

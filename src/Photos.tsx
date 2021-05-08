@@ -4,6 +4,7 @@ import { PhotoThumb } from './Album';
 import { route } from 'preact-router';
 import { Gallery } from './AlbumGallery';
 import { Photo } from './Photo';
+import { sized } from './contentful';
 
 export const Photos = ({ photoId }: { photoId?: string }) => {
   const [page, setPage] = useState(0);
@@ -14,6 +15,8 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
       .then(setPhotos);
   }, [page]);
   if (photos.length === 0) return <p>Loading ...</p>;
+  const getNextPhotoId = (increment = 1) =>
+    photos[(photos.indexOf(photoId ?? photos[0]) + increment) % photos.length];
   return (
     <Fragment>
       {photoId && (
@@ -21,6 +24,22 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
           id={photoId}
           onClose={() => {
             route(`/photos`);
+          }}
+          onPrev={() => {
+            let k = photos.indexOf(photoId) - 1;
+            if (k < 0) k = photos.length - 1;
+            route(`/photo/${encodeURIComponent(photos[k])}`);
+            window.scrollTo({ top: 0 });
+          }}
+          onNext={() => {
+            route(`/photo/${encodeURIComponent(getNextPhotoId())}`);
+            window.scrollTo({ top: 0 });
+          }}
+          onLoad={(size) => {
+            // Preload next image
+            fetch(`/data/photos/${getNextPhotoId(2)}.json`)
+              .then((res) => res.json())
+              .then(({ url }) => fetch(sized(size)({ url })));
           }}
         />
       )}

@@ -1,4 +1,4 @@
-import { exif } from './util/exif.mjs';
+import { exif, geo } from './util/exif.mjs';
 import { run } from './util/run.mjs';
 import path from 'path';
 import { promises as fs, createReadStream } from 'fs';
@@ -74,6 +74,7 @@ const importPhoto = async (photo) => {
           size: asset.fields.file['en-US'].details.size,
           image: asset.fields.file['en-US'].details.image,
           exif: e,
+          geo: geo(e),
         })
         .trim(),
       '---',

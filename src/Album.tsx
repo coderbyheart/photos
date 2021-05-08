@@ -54,7 +54,7 @@ const Gradient = styled.div`
 `;
 
 const StyledGallery = styled(Gallery)`
-  margin-top: -10%;
+  margin-top: -50px;
   ${PhotoEl} + & {
     margin-top: 0;
   }

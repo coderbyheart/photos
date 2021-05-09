@@ -19,30 +19,44 @@ const env = await limiter
   .then((res) => res.items[0]);
 
 const importPhoto = async (photo) => {
-  const e = await exif(photo);
   const checksum = (await run('sha256sum', photo)).split(' ')[0].substr(0, 8);
+  let takenAt;
+  let geoInfo;
+  let mediaInfo;
 
-  const takenAt = new Date(
-    e['Exif.Image.DateTime'].replace(
-      /^([0-9]{4}):([0-9]{2}):([0-9]{2}) /,
-      '$1-$2-$3T',
-    ),
-  );
+  let contentType = 'image/jpeg';
+  if (/mp4$/i.test(path.parse(photo).ext)) {
+    mediaInfo = JSON.parse(await run('mediainfo', '--Output=JSON', photo));
+    const {
+      media: { track },
+    } = mediaInfo;
+    mediaInfo = track;
+    contentType = 'video/mp4';
+    const [, date, time] = track[0]['Encoded_Date'].split(' ');
+    takenAt = new Date(`${date}T${time}Z`);
+  } else {
+    mediaInfo = await exif(photo);
+    geoInfo = geo(e);
+    takenAt = new Date(
+      e['Exif.Image.DateTime'].replace(
+        /^([0-9]{4}):([0-9]{2}):([0-9]{2}) /,
+        '$1-$2-$3T',
+      ),
+    );
+    if (/png$/i.test(path.parse(photo).ext)) contentType = 'image/png';
+    if (/gif$/i.test(path.parse(photo).ext)) contentType = 'image/gif';
+  }
 
   const fileName = `${takenAt
     .toISOString()
     .substr(0, 19)
     .replace(/[-:]/g, '')}-${checksum}`;
-
   const outFile = path.join(process.cwd(), 'data', 'photos', `${fileName}.md`);
 
-  let contentType = 'image/jpeg';
-  if (/png$/i.test(path.parse(photo).ext)) contentType = 'image/png';
-  if (/gif$/i.test(path.parse(photo).ext)) contentType = 'image/gif';
   const assetDraft = await env.createAssetFromFiles({
     fields: {
       title: {
-        'en-US': checksum,
+        'en-US': fileName,
       },
       file: {
         'en-US': {
@@ -68,13 +82,12 @@ const importPhoto = async (photo) => {
           title: fileName,
           takenAt,
           license: 'CC BY-ND 4.0',
-          // geo: { lat: 50.228306, lng: 8.621735 },
-          // tags: ['blue', 'grass', 'sphere'],
           url: asset.fields.file['en-US'].url,
           size: asset.fields.file['en-US'].details.size,
           image: asset.fields.file['en-US'].details.image,
-          exif: e,
-          geo: geo(e),
+          geo: geoInfo,
+          contentType,
+          mediaInfo,
         })
         .trim(),
       '---',

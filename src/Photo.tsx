@@ -27,6 +27,12 @@ const Fullscreen = styled.div`
   }
   background-position: 50% 50%;
   background-repeat: no-repeat;
+  video {
+    height: 100%;
+  }
+  display: flex;
+  align-content: center;
+  justify-content: center;
 `;
 const PrevNav = styled.div`
   position: absolute;
@@ -100,6 +106,7 @@ export const Photo = ({
 }) => {
   const [photo, setPhoto] = useState<Photo | undefined>(undefined);
   const [photoSrc, setPhotoSrc] = useState<string | undefined>(undefined);
+  const [video, setVideo] = useState<Video | undefined>(undefined);
 
   useLayoutEffect(() => {
     window.onkeyup = ({ key }: KeyboardEvent) => {
@@ -121,13 +128,24 @@ export const Photo = ({
     fetch(`/data/photos/${id}.json`)
       .then((res) => res.json())
       .then((p) => {
-        setPhoto({ ...p, id });
-        setPhotoSrc(
-          sized({
+        if ('image' in p) {
+          setVideo(undefined);
+          setPhoto({ ...p, id });
+          setPhotoSrc(
+            sized({
+              width: document.documentElement.clientWidth,
+              height: document.documentElement.clientHeight,
+            })({ ...p, id }),
+          );
+        } else {
+          setPhoto(undefined);
+          setPhotoSrc(undefined);
+          setVideo({ ...p, id });
+          onLoad?.({
             width: document.documentElement.clientWidth,
             height: document.documentElement.clientHeight,
-          })({ ...p, id }),
-        );
+          });
+        }
       })
       .catch(() => {
         console.error(`Failed to load photo data: ${id}`);
@@ -144,16 +162,25 @@ export const Photo = ({
     );
   }, [photoSrc]);
 
-  if (photo === undefined) return null;
+  if (photo === undefined && video === undefined) return null;
+
+  const media = (photo ?? video) as Media;
 
   return (
     <PhotoEl>
       <Dim>
-        <Fullscreen
-          style={{
-            backgroundImage: photoSrc ? `url(${photoSrc})` : undefined,
-          }}
-        />
+        {photoSrc && (
+          <Fullscreen
+            style={{
+              backgroundImage: photoSrc ? `url(${photoSrc})` : undefined,
+            }}
+          />
+        )}
+        {video && (
+          <Fullscreen>
+            <video src={video.url} autoPlay={true} />
+          </Fullscreen>
+        )}
         <PrevNav onClick={() => onPrev?.()}>
           <PrevIcon />
         </PrevNav>
@@ -165,37 +192,36 @@ export const Photo = ({
         </Button>
       </Dim>
       <Info>
-        <h1>{photo.title}</h1>
-        {photo.tags &&
-          photo.tags.map((tag, k) => (
+        <h1>{media.title}</h1>
+        {media.tags &&
+          media.tags.map((tag, k) => (
             <Link key={k} href={`/tags/${tag}`}>
               #{tag}
             </Link>
           ))}
-        {photo.html && (
-          <Description dangerouslySetInnerHTML={{ __html: photo.html }} />
+        {media.html && (
+          <Description dangerouslySetInnerHTML={{ __html: media.html }} />
         )}
-        {photo.geo && (
+        {media.geo && (
           <p>
             <a
-              href={`https://www.google.com/maps/search/${photo.geo.lat},${photo.geo.lng}`}
+              href={`https://www.google.com/maps/search/${media.geo.lat},${media.geo.lng}`}
               target={'blank'}
               rel={'noreferrer noopener'}
             >
-              <MapIcon /> {photo.geo.lat}, {photo.geo.lng}
+              <MapIcon /> {media.geo.lat}, {media.geo.lng}
             </a>
           </p>
         )}
-        {photo.license !== 'None' && (
+        {media.license !== 'None' && (
           <p>
-            <a title={'Download'} href={photo.url} target={'blank'}>
+            <a title={'Download'} href={media.url} target={'blank'}>
               <DownloadIcon />
-              {photo.image.width}⨯{photo.image.height} (
-              {(photo.size / 1024 / 1024).toFixed(1)} MB)
+              {(media.size / 1024 / 1024).toFixed(1)} MB
             </a>
           </p>
         )}
-        <License photo={photo} />
+        <License media={media} />
       </Info>
     </PhotoEl>
   );

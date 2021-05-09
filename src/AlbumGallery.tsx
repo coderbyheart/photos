@@ -28,6 +28,16 @@ export const AlbumThumb = styled.div`
   position: relative;
   cursor: pointer;
 `;
+export const VideoThumb = styled.div`
+  &:after {
+    content: '';
+    display: block;
+    padding-bottom: 100%;
+    border: 1px solid var(--text-color-light);
+  }
+  position: relative;
+  cursor: pointer;
+`;
 const Info = styled.div`
   position: absolute;
   color: var(--text-color-light);

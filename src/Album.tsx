@@ -1,7 +1,7 @@
 import { Fragment, h } from 'preact';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { thumb, sized } from './contentful';
-import { Gallery, AlbumThumb } from './AlbumGallery';
+import { Gallery, AlbumThumb, VideoThumb } from './AlbumGallery';
 import { format } from 'date-fns';
 import styled from 'styled-components';
 import { route } from 'preact-router';
@@ -194,7 +194,11 @@ const PhotoNavigator = ({
         // Preload next image
         fetch(`/data/photos/${getNextPhotoId(2)}.json`)
           .then((res) => res.json())
-          .then(({ url }) => fetch(sized(size)({ url })));
+          .then(async ({ url, image }) => {
+            if (image !== undefined) {
+              fetch(sized(size)({ url }));
+            }
+          });
       }}
       onClose={onClose}
     />
@@ -211,6 +215,7 @@ export const PhotoThumb = ({
   const el = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [photo, setPhoto] = useState<Photo | undefined>(undefined);
+  const [video, setVideo] = useState<Video | undefined>(undefined);
 
   useLayoutEffect(() => {
     if (el.current !== null) {
@@ -231,12 +236,20 @@ export const PhotoThumb = ({
     fetch(`/data/photos/${id}.json`)
       .then((res) => res.json())
       .then((p) => {
-        setPhoto({ ...p, id });
+        if (p.image) {
+          setVideo(undefined);
+          setPhoto({ ...p, id });
+        } else {
+          setPhoto(undefined);
+          setVideo({ ...p, id });
+        }
       })
       .catch(() => {
         console.error(`Failed to load photo data: ${id}`);
       });
   }, [visible]);
+
+  if (video) return <VideoThumb onClick={onClick} />;
 
   return (
     <AlbumThumb

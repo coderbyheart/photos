@@ -1,4 +1,4 @@
-import { h, Fragment } from 'preact';
+import { h } from 'preact';
 import styled from 'styled-components';
 
 const StyledLicense = styled.div`
@@ -6,8 +6,8 @@ const StyledLicense = styled.div`
   margin-top: 1rem;
 `;
 
-const Photographer = ({ photo }: { photo: Photo }) => {
-  if (photo.photographer === undefined)
+const Photographer = ({ media }: { media: Media }) => {
+  if (media.photographer === undefined)
     return (
       <a
         href={'https://coderbyheart.com/'}
@@ -17,26 +17,26 @@ const Photographer = ({ photo }: { photo: Photo }) => {
         Markus Tacker
       </a>
     );
-  if (photo.photographer.url === undefined)
-    return <span>{photo.photographer.name}</span>;
+  if (media.photographer.url === undefined)
+    return <span>{media.photographer.name}</span>;
   return (
     <a
-      href={photo.photographer.url}
+      href={media.photographer.url}
       target={'blank'}
       rel={'noreferrer noopener'}
     >
-      {photo.photographer.name}
+      {media.photographer.name}
     </a>
   );
 };
 
-export const License = ({ photo }: { photo: Photo }) => (
+export const License = ({ media }: { media: Media }) => (
   <StyledLicense>
     <p>
-      Photo <em>{photo.title}</em> by <Photographer photo={photo} />.
+      Photo <em>{media.title}</em> by <Photographer media={media} />.
     </p>
     {(() => {
-      switch (photo.license) {
+      switch (media.license) {
         case 'CC BY-ND 3.0':
           return (
             <p>
@@ -96,7 +96,7 @@ export const License = ({ photo }: { photo: Photo }) => (
       }
     })()}
     <p>
-      © {new Date(photo.takenAt).getFullYear()} <Photographer photo={photo} />.
+      © {new Date(media.takenAt).getFullYear()} <Photographer media={media} />.
       All rights reserved.
     </p>
   </StyledLicense>

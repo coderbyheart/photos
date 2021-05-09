@@ -7,7 +7,7 @@ type Album = {
   html?: string;
 };
 
-type Photo = {
+type Media = {
   id: string;
   title: string;
   takenAt: string;
@@ -16,7 +16,6 @@ type Photo = {
   tags?: string[];
   url: string;
   size: number;
-  image: { width: number; height: number };
   contentType: string;
   html?: string;
   photographer?: {
@@ -24,3 +23,9 @@ type Photo = {
     url?: string;
   };
 };
+
+type Photo = Media & {
+  image: { width: number; height: number };
+};
+
+type Video = Media & {};

@@ -9,7 +9,7 @@
     "build": "node load-data.js && snowpack build"
   },
   "dependencies": {
-    "date-fns": "2.21.2",
+    "date-fns": "2.21.3",
     "preact": "10.5.13",
     "preact-router": "3.2.1",
     "remark-frontmatter": "3.0.0",
@@ -29,7 +29,7 @@
     "husky": "6.0.0",
     "js-yaml": "^4.1.0",
     "lint-staged": "11.0.0",
-    "prettier": "2.2.1",
+    "prettier": "2.3.0",
     "remark": "13.0.0",
     "remark-extract-frontmatter": "3.1.0",
     "remark-html": "13.0.1",

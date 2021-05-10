@@ -125,27 +125,13 @@ const main = async () => {
             ),
           ),
         );
-        // Write tag pages
-        await Promise.all(
-          Object.entries(tags)
-            .filter(([, v]) => v > 1)
-            .map(([tag, slugs]) =>
-              writeFile(
-                path.join(
-                  process.cwd(),
-                  'data-js',
-                  `photos-tags-${encodeURIComponent(tag)}.json`,
-                ),
-                slugs,
-              ),
-            ),
-        );
+        // Write tags
         await writeFile(
           path.join(process.cwd(), 'data-js', `photos-tags.json`),
           Object.entries(tags)
             .sort(([, v1], [, v2]) => v2.length - v1.length)
-            .filter(([, v]) => v > 1)
-            .reduce((t, [k, v]) => ({ ...t, [k]: v.length })),
+            .filter(([, v]) => v.length > 1)
+            .reduce((t, [k, v]) => ({ ...t, [k]: v })),
         );
       }),
   ]);

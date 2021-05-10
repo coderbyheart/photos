@@ -10,10 +10,8 @@ const toHTML = remark()
   .use(frontmatter, ['yaml'])
   .use(extract, { yaml: yaml });
 
-const writeFile = async (target, data) => {
-  console.debug(`Writing ${target} ...`);
-  return fs.writeFile(target, JSON.stringify(data), 'utf-8');
-};
+const writeFile = async (target, data) =>
+  fs.writeFile(target, JSON.stringify(data), 'utf-8');
 
 const parse = async (el) =>
   new Promise((resolve, reject) =>
@@ -85,7 +83,6 @@ const main = async () => {
               'photos',
               `${p.name}.json`,
             );
-            console.debug(`Loading ${source}...`);
             const doc = await parse(await fs.readFile(source, 'utf-8'));
             const slug = path.parse(f).name;
             doc.tags?.map((tag) => {
@@ -101,7 +98,6 @@ const main = async () => {
               targetModified = (await fs.stat(target)).mtime;
             } catch {}
             if (targetModified < sourceModified) {
-              console.debug(`Writing ${target} ...`);
               await writeFile(target, doc);
             }
             return { slug, doc };

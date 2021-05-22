@@ -34,7 +34,6 @@ export const AlbumMap = ({ album }: { album: Album }) => {
   const map = useRef<mapboxgl.Map>(null);
   const [photos, setPhotos] = useState<PhotoWithLocation[]>([]);
   useEffect(() => {
-    console.log({ map, mapContainer });
     if (map.current !== null || mapContainer.current === null) return; // initialize map only once
 
     map.current = new mapboxgl.Map({

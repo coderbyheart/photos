@@ -29,3 +29,9 @@ type Photo = Media & {
 };
 
 type Video = Media & {};
+
+interface ImportMeta {
+  env: {
+    SNOWPACK_PUBLIC_MAPBOX_TOKEN: string;
+  };
+}

@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import styled from 'styled-components';
 import { route } from 'preact-router';
 import { Photo, PhotoEl } from './Photo';
+import { AlbumMap } from './AlbumMap';
 
 const Header = styled.header`
   display: flex;
@@ -152,6 +153,7 @@ export const Album = ({
           />
         ))}
       </StyledGallery>
+      {!photoId && <AlbumMap album={album} />}
     </Fragment>
   );
 };

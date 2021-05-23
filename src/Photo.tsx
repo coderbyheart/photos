@@ -27,6 +27,7 @@ const Fullscreen = styled.div`
   }
   background-position: 50% 50%;
   background-repeat: no-repeat;
+  background-size: cover;
   video {
     height: 100%;
   }

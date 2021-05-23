@@ -1,4 +1,5 @@
-const hiRes = (size: number): number => Math.floor(hiRes(size));
+const hiRes = (size: number): number =>
+  Math.floor(size * (window.devicePixelRatio ?? 1));
 
 export const thumb =
   (size: number) =>

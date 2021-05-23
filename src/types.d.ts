@@ -5,6 +5,7 @@ type Album = {
   cover?: string;
   photos: string[];
   html?: string;
+  track?: string[];
 };
 
 type Media = {

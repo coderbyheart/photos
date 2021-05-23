@@ -43,6 +43,38 @@ export const AlbumMap = ({ album }: { album: Album }) => {
       zoom: 6,
     });
 
+    if (album.track !== undefined) {
+      map.current.on('load', () => {
+        map.current.addSource('route', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: (album.track as string[]).map((pos) =>
+                pos.split(',').map(parseFloat),
+              ),
+            },
+          },
+        });
+        map.current.addLayer({
+          id: 'route',
+          type: 'line',
+          source: 'route',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': '#000000',
+            'line-opacity': 0.5,
+            'line-width': 6,
+          },
+        });
+      });
+    }
+
     Promise.all(
       album.photos.map((id) =>
         fetch(`/data/photos/${id}.json`)

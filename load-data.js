@@ -10,6 +10,8 @@ const toHTML = remark()
   .use(frontmatter, ['yaml'])
   .use(extract, { yaml: yaml });
 
+const photosPerPage = 10;
+
 const writeFile = async (target, data) =>
   fs.writeFile(target, JSON.stringify(data), 'utf-8');
 
@@ -109,7 +111,7 @@ const main = async () => {
         );
         const photoPages = photoDocs.reduce(
           (chunks, { slug }) => {
-            if ((chunks[chunks.length - 1].length ?? 0) >= 50) {
+            if ((chunks[chunks.length - 1].length ?? 0) >= photosPerPage) {
               chunks.push([]);
             }
             chunks[chunks.length - 1].push(slug);

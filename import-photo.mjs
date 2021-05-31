@@ -33,7 +33,7 @@ const importPhoto = async (photo) => {
   }
 
   const takenAt = new Date(
-    mediaInfo['Exif.Image.DateTime'].replace(
+    mediaInfo.Image.DateTime.replace(
       /^([0-9]{4}):([0-9]{2}):([0-9]{2}) /,
       '$1-$2-$3T',
     ),

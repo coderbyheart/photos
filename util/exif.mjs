@@ -1,49 +1,43 @@
 import { run } from './run.mjs';
 
 export const exif = async (f) =>
-  (await run('exiv2', '-Pkyct', f))
+  (await run('exiv2', '-PExgnycv', f))
     .split('\n')
     .filter((s) => s.length > 0)
-    .reduce(
-      (info, s) => ({
-        ...info,
-        [s.substr(0, 45).trim()]: s.substr(60).trim(),
-      }),
-      {},
-    );
+    .reduce((info, s) => {
+      const { cat, prop, format, len, value } = s.match(
+        /(?<addr>[^ ]+) +(?<cat>[^ ]+) +(?<prop>[^ ]+) +(?<format>[^ ]+) +(?<len>[0-9]+) +(?<value>.+)/,
+      ).groups;
+      if (info[cat] === undefined) {
+        info[cat] = {};
+      }
+      let v = value;
+      switch (format) {
+        case 'Rational':
+        case 'SRational':
+          v = value
+            .split(' ')
+            .map((v) => {
+              const [a, b] = v.split('/');
+              return parseInt(a) / parseInt(b);
+            })
+            .map((n) => (isNaN(n) ? 0 : n));
+          break;
+        case 'Short':
+          v = parseInt(value, 10);
+          break;
+        case 'Long':
+          v = parseFloat(value);
+          break;
+      }
+      info[cat][prop] = v;
+      return info;
+    }, {});
 
-const geoRx = /(?<deg>[0-9\.]+)deg (?<min>[0-9\.]+)' (?<sec>[0-9\.]+)"/;
-const toDecimalCoords = (degrees, minutes, seconds, direction) => {
-  var dd =
-    parseInt(degrees, 10) +
-    parseInt(minutes, 10) / 60 +
-    parseInt(seconds, 10) / 3600;
-  if (direction == 'South' || direction == 'West') {
-    dd = dd * -1;
-  }
-  return dd;
-};
 export const geo = (exif) => {
-  if (exif['Exif.GPSInfo.GPSLatitude'] === undefined) return;
-  const { deg: latDeg, min: latMin, sec: latSec } = exif[
-    'Exif.GPSInfo.GPSLatitude'
-  ].match(geoRx).groups;
-  const lat = toDecimalCoords(
-    latDeg,
-    latMin,
-    latSec,
-    exif['Exif.GPSInfo.GPSLatitudeRef'],
-  );
-
-  const { deg: lngDeg, min: lngMin, sec: lngSec } = exif[
-    'Exif.GPSInfo.GPSLongitude'
-  ].match(geoRx).groups;
-  const lng = toDecimalCoords(
-    lngDeg,
-    lngMin,
-    lngSec,
-    exif['Exif.GPSInfo.GPSLongitudeRef'],
-  );
-
-  return { lat, lng };
+  if (exif?.GPSInfo?.GPSLatitude === undefined) return;
+  return {
+    lat: exif.GPSInfo.GPSLatitude[0],
+    lng: exif.GPSInfo.GPSLongitude[0],
+  };
 };

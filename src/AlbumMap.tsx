@@ -33,8 +33,29 @@ export const AlbumMap = ({ album }: { album: Album }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map>(null);
   const [photos, setPhotos] = useState<PhotoWithLocation[]>([]);
+
   useEffect(() => {
+    Promise.all(
+      album.photos.map((id) =>
+        fetch(`/data/photos/${id}.json`)
+          .then((res) => res.json())
+          .then((photo) => ({ ...photo, id })),
+      ),
+    )
+      .then((photosWithMaybeLocation) =>
+        photosWithMaybeLocation.filter(({ geo }) => geo !== undefined),
+      )
+      .then((photosWithLocation) => {
+        setPhotos(photosWithLocation);
+      });
+  }, [album]);
+
+  useEffect(() => {
+    console.log(map.current);
+    console.log(mapContainer.current);
     if (map.current !== null || mapContainer.current === null) return; // initialize map only once
+
+    console.log('map');
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -43,9 +64,11 @@ export const AlbumMap = ({ album }: { album: Album }) => {
       zoom: 6,
     });
 
+    console.log(album.track);
+
     if (album.track !== undefined) {
-      map.current.on('load', () => {
-        map.current.addSource('route', {
+      map.current?.on('load', () => {
+        map.current?.addSource('route', {
           type: 'geojson',
           data: {
             type: 'Feature',
@@ -58,7 +81,7 @@ export const AlbumMap = ({ album }: { album: Album }) => {
             },
           },
         });
-        map.current.addLayer({
+        map.current?.addLayer({
           id: 'route',
           type: 'line',
           source: 'route',
@@ -74,28 +97,19 @@ export const AlbumMap = ({ album }: { album: Album }) => {
         });
       });
     }
-
-    Promise.all(
-      album.photos.map((id) =>
-        fetch(`/data/photos/${id}.json`)
-          .then((res) => res.json())
-          .then((photo) => ({ ...photo, id })),
-      ),
-    )
-      .then((photosWithMaybeLocation) =>
-        photosWithMaybeLocation.filter(({ geo }) => geo !== undefined),
-      )
-      .then((photosWithLocation) => {
-        setPhotos(photosWithLocation);
-      });
-  });
+  }, [album]);
 
   return (
     <AlbumContainer>
       <MapContainer ref={mapContainer}>
-        {photos.map((photo) => (
-          <MapMarker album={album} photo={photo} map={map.current} />
-        ))}
+        {map.current !== null &&
+          photos.map((photo) => (
+            <MapMarker
+              album={album}
+              photo={photo}
+              map={map.current as mapboxgl.Map}
+            />
+          ))}
       </MapContainer>
     </AlbumContainer>
   );

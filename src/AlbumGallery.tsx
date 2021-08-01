@@ -117,12 +117,13 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
     <AlbumThumb
       ref={el}
       style={{
-        backgroundImage: cover
-          ? `url(${sized({
-              width: el.current?.clientWidth,
-              height: el.current?.clientHeight,
-            })(cover)})`
-          : undefined,
+        backgroundImage:
+          cover && el.current !== null
+            ? `url(${sized({
+                width: el.current?.clientWidth,
+                height: el.current?.clientHeight,
+              })(cover)})`
+            : undefined,
       }}
       onClick={() => {
         route(`/album/${encodeURIComponent(album.id)}`);

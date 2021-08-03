@@ -1,14 +1,19 @@
-const { promises: fs } = require('fs');
-const path = require('path');
-const remark = require('remark');
-const html = require('remark-html');
-const frontmatter = require('remark-frontmatter');
-const extract = require('remark-extract-frontmatter');
-const yaml = require('yaml').parse;
+import { promises as fs } from 'fs';
+import * as path from 'path';
+import { remark } from 'remark';
+import frontmatter from 'remark-frontmatter';
+import extract from 'remark-extract-frontmatter';
+import yaml from 'yaml';
+import remark2rehype from 'remark-rehype';
+import format from 'rehype-format';
+import html from 'rehype-stringify';
+
 const toHTML = remark()
-  .use(html)
   .use(frontmatter, ['yaml'])
-  .use(extract, { yaml: yaml });
+  .use(extract, { yaml: yaml.parse })
+  .use(remark2rehype)
+  .use(format)
+  .use(html);
 
 const photosPerPage = 10;
 
@@ -21,7 +26,7 @@ const parse = async (el) =>
       if (err !== undefined && err !== null) return reject(err);
       return resolve({
         ...file.data,
-        html: file.contents.length > 0 ? file.contents : undefined,
+        html: file.value.length > 0 ? file.value : undefined,
       });
     }),
   );

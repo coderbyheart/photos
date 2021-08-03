@@ -51,11 +51,7 @@ export const AlbumMap = ({ album }: { album: Album }) => {
   }, [album]);
 
   useEffect(() => {
-    console.log(map.current);
-    console.log(mapContainer.current);
     if (map.current !== null || mapContainer.current === null) return; // initialize map only once
-
-    console.log('map');
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -63,8 +59,6 @@ export const AlbumMap = ({ album }: { album: Album }) => {
       center: [10.394980097332425, 63.43050145201516],
       zoom: 6,
     });
-
-    console.log(album.track);
 
     if (album.track !== undefined) {
       map.current?.on('load', () => {

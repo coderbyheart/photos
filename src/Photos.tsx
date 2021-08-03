@@ -19,7 +19,6 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
   const [page, setPage] = useState(0);
   const [photos, setPhotos] = useState<string[]>([]);
   useEffect(() => {
-    console.log(page);
     fetch(`/data/photos-takenAt-${page}.json`)
       .then((res) => res.json())
       .then((p) => setPhotos((photos) => [...photos, ...p]));

@@ -15,7 +15,7 @@ const toHTML = remark()
   .use(format)
   .use(html);
 
-const photosPerPage = 10;
+const photosPerPage = 50;
 
 const writeFile = async (target, data) =>
   fs.writeFile(target, JSON.stringify(data), 'utf-8');

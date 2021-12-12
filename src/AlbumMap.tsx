@@ -30,8 +30,8 @@ const MapIcon = styled.div`
 type PhotoWithLocation = Photo & { geo: { lat: number; lng: number } };
 
 export const AlbumMap = ({ album }: { album: Album }) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map>(null);
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
   const [photos, setPhotos] = useState<PhotoWithLocation[]>([]);
 
   useEffect(() => {
@@ -118,8 +118,8 @@ const MapMarker = ({
   photo: PhotoWithLocation;
   map: mapboxgl.Map;
 }) => {
-  const markerRef = useRef<HTMLDivElement>(null);
-  const marker = useRef<mapboxgl.Marker>(null);
+  const markerRef = useRef<HTMLDivElement | null>(null);
+  const marker = useRef<mapboxgl.Marker | null>(null);
   useEffect(() => {
     if (marker.current !== null || markerRef.current === null) return; // initialize marker only once
     marker.current = new mapboxgl.Marker(markerRef.current)

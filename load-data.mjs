@@ -110,7 +110,7 @@ const main = async () => {
             return { slug, doc };
           }),
         );
-        // Write paginated, sorted photos pages
+        // Sort photos by date taken, write paginated
         photoDocs.sort(({ doc: { takenAt: a } }, { doc: { takenAt: b } }) =>
           b.localeCompare(a),
         );
@@ -129,6 +129,27 @@ const main = async () => {
             writeFile(
               path.join(process.cwd(), 'data-js', `photos-takenAt-${k}.json`),
               page,
+            ),
+          ),
+        );
+        // Group by year and month
+        const photoMonths = photoDocs.reduce((photosByMonth, { slug, doc }) => {
+          const month = doc.takenAt.substr(0, 7);
+          if (photosByMonth[month] === undefined) {
+            photosByMonth[month] = [];
+          }
+          photosByMonth[month].push(slug);
+          return photosByMonth;
+        }, {});
+        await Promise.all(
+          Object.entries(photoMonths).map(([month, slugs]) =>
+            writeFile(
+              path.join(
+                process.cwd(),
+                'data-js',
+                `photos-byMonth-${month}.json`,
+              ),
+              slugs,
             ),
           ),
         );

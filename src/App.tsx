@@ -7,6 +7,7 @@ import { Album } from './Album';
 import { Navigation } from './Navigation';
 
 import './reset.css';
+import { PhotosByMonth } from './PhotosByMonth';
 
 const theme = {
   mobileBreakpoint: '500px',
@@ -65,6 +66,21 @@ const AlbumPage = ({ albumId }: { albumId: string }) => (
     <Album albumId={albumId} />
   </Fragment>
 );
+
+const MonthAlbumPage = ({
+  year,
+  month,
+  photoId,
+}: {
+  year: string;
+  month: string;
+  photoId?: string;
+}) => (
+  <Fragment>
+    <Navigation />
+    <PhotosByMonth year={year} month={month} photoId={photoId} />
+  </Fragment>
+);
 const PhotoPage = ({
   albumId,
   photoId,
@@ -83,6 +99,11 @@ export const App = () => {
         <Route path="/photos" component={PhotosPage} />
         <Route path="/photo/:photoId" component={SinglePhotoPage} />
         <Route path="/album/:albumId" component={AlbumPage} />
+        <Route path="/takenAt/:year/:month" component={MonthAlbumPage} />
+        <Route
+          path="/takenAt/:year/:month/:photoId"
+          component={MonthAlbumPage}
+        />
         <Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
       </Router>
     </ThemeProvider>

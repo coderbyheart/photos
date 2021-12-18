@@ -20,6 +20,7 @@ const MapContainer = styled.div`
 const MapIcon = styled.div`
   background-image: url('/mapbox-icon.png');
   background-size: cover;
+  background-position: center;
   width: 50px;
   height: 50px;
   border-radius: 10%;
@@ -27,12 +28,14 @@ const MapIcon = styled.div`
   box-shadow: 0 0 5px 0px #00000073;
 `;
 
-type PhotoWithLocation = Photo & { geo: { lat: number; lng: number } };
+type MediaWithLocation = (Photo | Video) & {
+  geo: { lat: number; lng: number };
+};
 
 export const AlbumMap = ({ album }: { album: Album }) => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [photos, setPhotos] = useState<PhotoWithLocation[]>([]);
+  const [media, setMedia] = useState<MediaWithLocation[]>([]);
 
   useEffect(() => {
     Promise.all(
@@ -42,12 +45,10 @@ export const AlbumMap = ({ album }: { album: Album }) => {
           .then((photo) => ({ ...photo, id })),
       ),
     )
-      .then((photosWithMaybeLocation) =>
-        photosWithMaybeLocation.filter(({ geo }) => geo !== undefined),
+      .then((withMaybeLocation) =>
+        withMaybeLocation.filter(({ geo }) => geo !== undefined),
       )
-      .then((photosWithLocation) => {
-        setPhotos(photosWithLocation);
-      });
+      .then(setMedia);
   }, [album]);
 
   useEffect(() => {
@@ -97,10 +98,10 @@ export const AlbumMap = ({ album }: { album: Album }) => {
     <AlbumContainer>
       <MapContainer ref={mapContainer}>
         {map.current !== null &&
-          photos.map((photo) => (
+          media.map((media) => (
             <MapMarker
               album={album}
-              photo={photo}
+              media={media}
               map={map.current as mapboxgl.Map}
             />
           ))}
@@ -111,11 +112,11 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 
 const MapMarker = ({
   album,
-  photo,
+  media,
   map,
 }: {
   album: Album;
-  photo: PhotoWithLocation;
+  media: MediaWithLocation;
   map: mapboxgl.Map;
 }) => {
   const markerRef = useRef<HTMLDivElement | null>(null);
@@ -123,17 +124,25 @@ const MapMarker = ({
   useEffect(() => {
     if (marker.current !== null || markerRef.current === null) return; // initialize marker only once
     marker.current = new mapboxgl.Marker(markerRef.current)
-      .setLngLat(photo.geo)
+      .setLngLat(media.geo)
       .addTo(map);
   });
+  let backgroundImage;
+  if ('image' in media) backgroundImage = thumb(50)(media);
+  if ('video' in media && 'youtube' in media.video)
+    backgroundImage = `https://img.youtube.com/vi/${media.video.youtube}/hqdefault.jpg`;
   return (
     <MapIcon
       ref={markerRef}
-      style={{ backgroundImage: `url(${thumb(50)(photo)})` }}
+      style={{
+        backgroundImage: backgroundImage
+          ? `url(${backgroundImage})`
+          : undefined,
+      }}
       onClick={() => {
         route(
           `/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
-            photo.id,
+            media.id,
           )}`,
         );
       }}

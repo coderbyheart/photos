@@ -39,7 +39,8 @@ const PrevNav = styled.div`
   position: absolute;
   width: 25%;
   min-width: 50px;
-  height: 100%;
+  height: 50%;
+  min-height: 50px;
   left: 0;
   display: flex;
   align-content: center;

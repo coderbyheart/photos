@@ -232,12 +232,14 @@ export const Photo = ({
 };
 
 const YoutubePlayer = ({ media }: { media: Video }) => {
-  const portrait = media.video.width < media.video.height;
+  const videoWidth = media.video.width ?? 650;
+  const videoHeight = media.video.height ?? 1150;
+  const portrait = videoWidth < videoHeight;
   let width = document.documentElement.clientWidth;
-  let height = width * (media.video.height / media.video.width);
+  let height = width * (videoHeight / videoWidth);
   if (portrait) {
     height = document.documentElement.clientHeight - 30;
-    width = height * (media.video.width / media.video.height);
+    width = height * (videoWidth / videoHeight);
   }
   return (
     <Fullscreen>

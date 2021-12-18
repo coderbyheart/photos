@@ -37,7 +37,8 @@ const Fullscreen = styled.div`
 `;
 const PrevNav = styled.div`
   position: absolute;
-  width: 50%;
+  width: 25%;
+  min-width: 50px;
   height: 100%;
   left: 0;
   display: flex;

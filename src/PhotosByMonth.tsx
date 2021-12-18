@@ -39,7 +39,6 @@ export const PhotosByMonth = ({
             window.scrollTo({ top: 0 });
           }}
           onNext={() => {
-            console.log(getNextPhotoId());
             route(
               `/takenAt/${year}/${month}/${encodeURIComponent(
                 getNextPhotoId(),

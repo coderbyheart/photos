@@ -29,7 +29,13 @@ type Photo = Media & {
   image: { width: number; height: number };
 };
 
-type Video = Media & {};
+type Video = Media & {
+  video: {
+    width: number;
+    height: number;
+    youtube?: string;
+  };
+};
 
 interface ImportMeta {
   env: {

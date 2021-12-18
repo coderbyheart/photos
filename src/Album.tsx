@@ -238,10 +238,10 @@ export const PhotoThumb = ({
     fetch(`/data/photos/${id}.json`)
       .then((res) => res.json())
       .then((p) => {
-        if (p.image) {
+        if ('image' in p) {
           setVideo(undefined);
           setPhoto({ ...p, id });
-        } else {
+        } else if ('video' in p) {
           setPhoto(undefined);
           setVideo({ ...p, id });
         }
@@ -251,7 +251,18 @@ export const PhotoThumb = ({
       });
   }, [visible]);
 
-  if (video) return <VideoThumb onClick={onClick} />;
+  if (video) {
+    return (
+      <VideoThumb
+        onClick={onClick}
+        style={{
+          backgroundImage: video.video?.youtube
+            ? `url(https://img.youtube.com/vi/${video.video.youtube}/hqdefault.jpg)`
+            : undefined,
+        }}
+      />
+    );
+  }
 
   return (
     <AlbumThumb

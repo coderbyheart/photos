@@ -33,10 +33,11 @@ export const VideoThumb = styled.div`
     content: '';
     display: block;
     padding-bottom: 100%;
-    border: 1px solid var(--text-color-light);
   }
+  background-color: #333;
   position: relative;
   cursor: pointer;
+  background-position: center;
 `;
 const Info = styled.div`
   position: absolute;

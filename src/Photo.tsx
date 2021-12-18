@@ -177,11 +177,12 @@ export const Photo = ({
             }}
           />
         )}
-        {video && (
+        {video?.url && (
           <Fullscreen>
             <video src={video.url} autoPlay={true} />
           </Fullscreen>
         )}
+        {video?.video?.youtube && <YoutubePlayer media={video} />}
         <PrevNav onClick={() => onPrev?.()}>
           <PrevIcon />
         </PrevNav>
@@ -214,7 +215,7 @@ export const Photo = ({
             </a>
           </p>
         )}
-        {media.license !== 'None' && (
+        {media.license !== 'None' && media.url && (
           <p>
             <a title={'Download'} href={media.url} target={'blank'}>
               <DownloadIcon />
@@ -225,5 +226,28 @@ export const Photo = ({
         <License media={media} />
       </Info>
     </PhotoEl>
+  );
+};
+
+const YoutubePlayer = ({ media }: { media: Video }) => {
+  const portrait = media.video.width < media.video.height;
+  let width = document.documentElement.clientWidth;
+  let height = width * (media.video.height / media.video.width);
+  if (portrait) {
+    height = document.documentElement.clientHeight - 30;
+    width = height * (media.video.width / media.video.height);
+  }
+  return (
+    <Fullscreen>
+      <iframe
+        width={width}
+        height={height}
+        src={`https://www.youtube-nocookie.com/embed/${media.video.youtube}?controls=0&autoplay=1&loop=1&modestbranding=1&rel=0&showinfo=0`}
+        title={media.title}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen={true}
+      ></iframe>
+    </Fullscreen>
   );
 };

@@ -1,4 +1,4 @@
-import { h } from 'preact';
+import { h, Fragment } from 'preact';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { sized } from './contentful';
 import styled from 'styled-components';
@@ -199,9 +199,9 @@ export const Photo = ({
         <h1>{media.title}</h1>
         {media.tags &&
           media.tags.map((tag, k) => (
-            <Link key={k} href={`/tags/${tag}`}>
-              #{tag}
-            </Link>
+            <Fragment key={k}>
+              <Link href={`/tags/${tag}`}>#{tag}</Link>{' '}
+            </Fragment>
           ))}
         {media.html && (
           <Description dangerouslySetInnerHTML={{ __html: media.html }} />

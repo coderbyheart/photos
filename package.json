@@ -17,7 +17,7 @@
     "styled-components": "5.3.3"
   },
   "devDependencies": {
-    "@nordicsemiconductor/asset-tracker-cloud-code-style": "9.2.34",
+    "@nordicsemiconductor/asset-tracker-cloud-code-style": "9.2.35",
     "@nordicsemiconductor/eslint-config-asset-tracker-cloud-typescript": "8.1.19",
     "@prefresh/snowpack": "3.1.2",
     "@snowpack/plugin-dotenv": "2.2.0",

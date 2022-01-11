@@ -1,14 +1,14 @@
-import { h, Fragment } from 'preact';
+import { Fragment, h } from 'preact';
+import { Link } from 'preact-router';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
-import { sized } from './contentful';
 import styled from 'styled-components';
-import { X as CloseIcon } from './icons/X';
+import { sized } from './contentful';
 import { ChevronLeft as PrevIcon } from './icons/ChevronLeft';
 import { ChevronRight as NextIcon } from './icons/ChevronRight';
 import { Download as DownloadIcon } from './icons/Download';
 import { MapPin as MapIcon } from './icons/MapPin';
+import { X as CloseIcon } from './icons/X';
 import { License } from './License';
-import { Link } from 'preact-router';
 
 export const Dim = styled.div`
   display: flex;
@@ -34,6 +34,7 @@ const Fullscreen = styled.div`
   display: flex;
   align-content: center;
   justify-content: center;
+  align-items: center;
 `;
 const PrevNav = styled.div`
   position: absolute;

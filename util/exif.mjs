@@ -36,8 +36,21 @@ export const exif = async (f) =>
 
 export const geo = (exif) => {
   if (exif?.GPSInfo?.GPSLatitude === undefined) return;
+  const [latDeg, latMin, latSec] = exif.GPSInfo.GPSLatitude;
+  const latDir = exif.GPSInfo.GPSLatitudeRef;
+  const [lngDeg, lngMin, lngSec] = exif.GPSInfo.GPSLongitude;
+  const lngDir = exif.GPSInfo.GPSLongitudeRef;
   return {
-    lat: exif.GPSInfo.GPSLatitude[0],
-    lng: exif.GPSInfo.GPSLongitude[0],
+    lat: dmsToDecimal(latDeg, latMin, latSec, latDir),
+    lng: dmsToDecimal(lngDeg, lngMin, lngSec, lngDir),
   };
+};
+
+const dmsToDecimal = (degrees, minutes, seconds, direction) => {
+  let decimal = degrees + minutes / 60 + seconds / (60 * 60);
+
+  if (direction == 'S' || direction == 'W') {
+    decimal = decimal * -1;
+  }
+  return decimal;
 };

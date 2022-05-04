@@ -87,6 +87,7 @@ photos:
   - 20220429T174319-7250d855
   - 20220429T174341-ab485cfe
   - 20220430T055204-3bfec199
+  - 20220430-buddha-retreats-sunset-timelapse
 ---
 
 This was our first visit to [Buddha Retreats](https://www.buddharetreats.com/) where we stayed for a week.

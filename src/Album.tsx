@@ -1,12 +1,12 @@
-import { Fragment, h } from 'preact';
-import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
-import { thumb, sized } from './contentful';
-import { Gallery, AlbumThumb, VideoThumb } from './AlbumGallery';
 import { format } from 'date-fns';
-import styled from 'styled-components';
+import { Fragment, h } from 'preact';
 import { route } from 'preact-router';
-import { Photo, PhotoEl } from './Photo';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+import styled from 'styled-components';
+import { AlbumThumb, Gallery, VideoThumb } from './AlbumGallery';
 import { AlbumMap } from './AlbumMap';
+import { sized, thumb } from './contentful';
+import { Photo, PhotoEl } from './Photo';
 
 const Header = styled.header`
   display: flex;

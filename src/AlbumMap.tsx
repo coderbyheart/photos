@@ -57,7 +57,7 @@ export const AlbumMap = ({ album }: { album: Album }) => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [10.394980097332425, 63.43050145201516],
+      center: album.geo?? [10.394980097332425, 63.43050145201516],
       zoom: 6,
     });
 

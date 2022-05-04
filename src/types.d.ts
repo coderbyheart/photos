@@ -6,6 +6,7 @@ type Album = {
   photos: string[];
   html?: string;
   track?: string[];
+  geo?: { lat: number; lng: number };
 };
 
 type Media = {

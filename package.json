@@ -19,6 +19,7 @@
   "devDependencies": {
     "@nordicsemiconductor/asset-tracker-cloud-code-style": "11.0.83",
     "@nordicsemiconductor/eslint-config-asset-tracker-cloud-typescript": "10.0.23",
+    "@nordicsemiconductor/from-env": "1.0.1",
     "@prefresh/snowpack": "3.1.4",
     "@snowpack/plugin-dotenv": "2.2.0",
     "@snowpack/plugin-typescript": "1.2.1",

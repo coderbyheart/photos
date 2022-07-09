@@ -1,20 +1,26 @@
+import { fromEnv } from '@nordicsemiconductor/from-env';
+import Bottleneck from 'bottleneck';
+import contentfulManagement from 'contentful-management';
+import { createReadStream, promises as fs } from 'fs';
+import yaml from 'js-yaml';
+import path from 'path';
 import { exif, geo } from './util/exif.mjs';
 import { run } from './util/run.mjs';
-import path from 'path';
-import { promises as fs, createReadStream } from 'fs';
-import yaml from 'js-yaml';
-import contentfulManagement from 'contentful-management';
-import Bottleneck from 'bottleneck';
+
+const { accessToken, spaceId } = fromEnv({
+  accessToken: 'CONTENTFUL_MANAGEMENT_API_TOKEN',
+  spaceId: 'CONTENTFUL_SPACE',
+})(process.env);
 
 const limiter = new Bottleneck({
   minTime: 1000 / 5,
   maxConcurrent: 5,
 });
 const cfM = contentfulManagement.createClient({
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_API_TOKEN,
+  accessToken,
 });
 const env = await limiter
-  .schedule(() => cfM.getSpace(process.env.CONTENTFUL_SPACE))
+  .schedule(() => cfM.getSpace(spaceId))
   .then((space) => limiter.schedule(() => space.getEnvironments()))
   .then((res) => res.items[0]);
 

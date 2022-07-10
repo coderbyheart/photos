@@ -1,4 +1,4 @@
-import { run } from './run.mjs';
+import { run } from './run.js';
 
 export const exif = async (f) =>
   (await run('exiv2', '-PExgnycv', f))

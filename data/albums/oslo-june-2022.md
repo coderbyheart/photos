@@ -33,7 +33,7 @@ photos:
   - 20220619T110028-030c46c3
   - 20220619T110521-fac760b8
   - 20220619T115659-9fd385b0
-  - 20220619T115659-V3bO7Wu80-c
+  - 20220619T115659-fFdDzk4_tk4
 ---
 
 We visited Oslo in June 2022 to meet Jenny & Lukas, who recently moved there

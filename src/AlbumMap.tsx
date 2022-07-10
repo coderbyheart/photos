@@ -2,6 +2,7 @@ import mapboxgl from 'mapbox-gl'
 import { route } from 'preact-router'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
+import '../node_modules/mapbox-gl/src/css/mapbox-gl.css'
 import { thumb } from './contentful'
 
 mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN
@@ -32,37 +33,71 @@ type MediaWithLocation = (Photo | Video) & {
 }
 
 export const AlbumMap = ({ album }: { album: Album }) => {
-	const mapContainer = useRef<HTMLDivElement | null>(null)
-	const map = useRef<mapboxgl.Map | null>(null)
-	const [media, setMedia] = useState<MediaWithLocation[]>([])
+	const [mediaWithLocation, setMediaWithLocation] = useState<
+		MediaWithLocation[]
+	>([])
 
 	useEffect(() => {
-		Promise.all(
-			album.photos.map((id) =>
-				fetch(`/data/photos/${id}.json`)
-					.then((res) => res.json())
-					.then((photo) => ({ ...photo, id })),
-			),
-		)
-			.then((withMaybeLocation) =>
-				withMaybeLocation.filter(({ geo }) => geo !== undefined),
+		let isMounted = true
+		const t = setTimeout(() => {
+			Promise.all(
+				album.photos.map((id) =>
+					fetch(`/data/photos/${id}.json`)
+						.then((res) => res.json())
+						.then((photo) => ({ ...photo, id })),
+				),
 			)
-			.then(setMedia)
+				.then((withMaybeLocation) =>
+					withMaybeLocation.filter(({ geo }) => geo !== undefined),
+				)
+				.then((mediaWithLocation) => {
+					if (!isMounted) return
+					if (mediaWithLocation.length > 0)
+						console.debug(
+							`Album has`,
+							mediaWithLocation.length,
+							'entries with geo location',
+						)
+					if (mediaWithLocation.length > 0)
+						setMediaWithLocation(mediaWithLocation)
+				})
+		}, 1000)
+
+		return () => {
+			isMounted = false
+			clearTimeout(t)
+		}
 	}, [album])
 
-	useEffect(() => {
-		if (map.current !== null || mapContainer.current === null) return // initialize map only once
+	if (mediaWithLocation.length === 0) return null
 
-		map.current = new mapboxgl.Map({
-			container: mapContainer.current,
+	return <Map mediaWithLocation={mediaWithLocation} album={album} />
+}
+
+const Map = ({
+	mediaWithLocation,
+	album,
+}: {
+	mediaWithLocation: MediaWithLocation[]
+	album: Album
+}) => {
+	const mapRef = useRef(null)
+	const [mapInstance, setMapInstance] = useState<mapboxgl.Map>()
+
+	useEffect(() => {
+		if (mapRef.current === null) return
+		console.debug(`[AlbumMap:Map]`, 'creating map')
+
+		const map = new mapboxgl.Map({
+			container: mapRef.current,
 			style: 'mapbox://styles/mapbox/streets-v11',
 			center: album.geo ?? [10.394980097332425, 63.43050145201516],
 			zoom: 6,
 		})
 
 		if (album.track !== undefined) {
-			map.current?.on('load', () => {
-				map.current?.addSource('route', {
+			map.on('load', () => {
+				map.addSource('route', {
 					type: 'geojson',
 					data: {
 						type: 'Feature',
@@ -75,7 +110,7 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 						},
 					},
 				})
-				map.current?.addLayer({
+				map.addLayer({
 					id: 'route',
 					type: 'line',
 					source: 'route',
@@ -91,20 +126,23 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 				})
 			})
 		}
-	}, [album])
 
-	if (media.length === 0) return null
+		map.on('load', () => {
+			setMapInstance(map)
+		})
+
+		return () => {
+			console.debug(`[AlbumMap:Map]`, 'destroying map')
+			map.remove()
+		}
+	}, [])
 
 	return (
 		<AlbumContainer>
-			<MapContainer ref={mapContainer}>
-				{map.current !== null &&
-					media.map((media) => (
-						<MapMarker
-							album={album}
-							media={media}
-							map={map.current as mapboxgl.Map}
-						/>
+			<MapContainer ref={mapRef}>
+				{mapInstance !== undefined &&
+					mediaWithLocation.map((media) => (
+						<MapMarker album={album} media={media} map={mapInstance} />
 					))}
 			</MapContainer>
 		</AlbumContainer>
@@ -120,18 +158,26 @@ const MapMarker = ({
 	media: MediaWithLocation
 	map: mapboxgl.Map
 }) => {
-	const markerRef = useRef<HTMLDivElement | null>(null)
-	const marker = useRef<mapboxgl.Marker | null>(null)
+	const markerRef = useRef(null)
+
 	useEffect(() => {
-		if (marker.current !== null || markerRef.current === null) return // initialize marker only once
-		marker.current = new mapboxgl.Marker(markerRef.current)
+		if (markerRef.current === null) return
+		console.debug(`[AlbumMap:Marker]`, 'creating marker')
+		const marker = new mapboxgl.Marker(markerRef.current)
 			.setLngLat(media.geo)
 			.addTo(map)
-	})
+
+		return () => {
+			console.debug(`[AlbumMap:Marker]`, 'destroying marker')
+			marker.remove()
+		}
+	}, [])
+
 	let backgroundImage
 	if ('image' in media) backgroundImage = thumb(50)(media)
 	if ('video' in media && 'youtube' in media.video)
 		backgroundImage = `https://img.youtube.com/vi/${media.video.youtube}/hqdefault.jpg`
+
 	return (
 		<MapIcon
 			ref={markerRef}

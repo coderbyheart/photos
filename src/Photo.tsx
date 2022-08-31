@@ -154,9 +154,11 @@ export const Photo = ({
 	}, [])
 
 	useEffect(() => {
+		let isMounted = true
 		fetch(`/data/photos/${id}.json`)
 			.then((res) => res.json())
 			.then((p) => {
+				if (!isMounted) return
 				if ('image' in p) {
 					setVideo(undefined)
 					setPhoto({ ...p, id })
@@ -182,6 +184,9 @@ export const Photo = ({
 			.catch(() => {
 				console.error(`Failed to load photo data: ${id}`)
 			})
+		return () => {
+			isMounted = false
+		}
 	}, [id])
 
 	useEffect(() => {

@@ -17,8 +17,6 @@ export const ScrollingProvider = ({
 
 		const updateScrolling = () => {
 			const isScrolling = window.scrollY > 0
-			console.log(window.scrollY, isScrolling)
-			console.log('scrolling', isScrolling)
 			setScrolling(isScrolling)
 			scrollTimeout = undefined
 		}

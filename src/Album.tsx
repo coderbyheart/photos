@@ -239,9 +239,11 @@ export const PhotoThumb = ({
 
 	useEffect(() => {
 		if (!visible) return
+		let mounted = true
 		fetch(`/data/photos/${id}.json`)
 			.then((res) => res.json())
 			.then((p) => {
+				if (!mounted) return
 				if ('image' in p) {
 					setVideo(undefined)
 					setPhoto({ ...p, id })
@@ -253,6 +255,9 @@ export const PhotoThumb = ({
 			.catch(() => {
 				console.error(`Failed to load photo data: ${id}`)
 			})
+		return () => {
+			mounted = false
+		}
 	}, [visible])
 
 	if (video) {

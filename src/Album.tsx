@@ -138,6 +138,7 @@ export const Album = ({
 					onClose={() => {
 						route(`/album/${encodeURIComponent(albumId)}`)
 					}}
+					key={photoId}
 				/>
 			)}
 			<StyledGallery>

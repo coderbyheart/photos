@@ -110,6 +110,16 @@ const Description = styled.div`
 
 export const PhotoEl = styled.main``
 
+const LoadingPhoto = styled.div`
+	display: flex;
+	height: calc(100vh + 50px);
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	color: var(--text-color-light);
+	opacity: 0.5;
+`
+
 export const Photo = ({
 	id,
 	onNext,
@@ -184,7 +194,12 @@ export const Photo = ({
 		)
 	}, [photoSrc])
 
-	if (photo === undefined && video === undefined) return null
+	if (photo === undefined && video === undefined)
+		return (
+			<LoadingPhoto>
+				<code>Loading {id} ...</code>
+			</LoadingPhoto>
+		)
 
 	const media = (photo ?? video) as Media
 

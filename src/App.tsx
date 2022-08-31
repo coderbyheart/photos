@@ -1,18 +1,19 @@
-import { h, Fragment } from 'preact';
-import { AlbumGallery } from './AlbumGallery';
-import { Router, Route } from 'preact-router';
-import { Photos } from './Photos';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { Album } from './Album';
-import { Navigation } from './Navigation';
+import { Fragment } from 'preact'
+import { Route, Router } from 'preact-router'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import { Album } from './Album'
+import { AlbumGallery } from './AlbumGallery'
+import { Navigation } from './Navigation'
+import { Photos } from './Photos'
 
-import './reset.css';
-import { PhotosByMonth } from './PhotosByMonth';
+import { PhotosByMonth } from './PhotosByMonth'
+import './reset.css'
+import { ScrollingProvider } from './useScroll'
 
 const theme = {
-  mobileBreakpoint: '500px',
-  desktopBreakpoint: '1000px',
-};
+	mobileBreakpoint: '500px',
+	desktopBreakpoint: '1000px',
+}
 
 const GlobalStyle = createGlobalStyle`
 
@@ -43,69 +44,70 @@ body {
     font-weight: var(--headline-thin-font-weight);
   }
 }
-`;
+`
 
 const AlbumsPage = () => (
-  <Fragment>
-    <Navigation />
-    <AlbumGallery />
-  </Fragment>
-);
+	<Fragment>
+		<Navigation />
+		<AlbumGallery />
+	</Fragment>
+)
 const PhotosPage = () => (
-  <Fragment>
-    <Navigation />
-    <Photos />
-  </Fragment>
-);
+	<Fragment>
+		<Navigation />
+		<Photos />
+	</Fragment>
+)
 const SinglePhotoPage = ({ photoId }: { photoId: string }) => (
-  <Photos photoId={photoId} />
-);
+	<Photos photoId={photoId} />
+)
 const AlbumPage = ({ albumId }: { albumId: string }) => (
-  <Fragment>
-    <Navigation />
-    <Album albumId={albumId} />
-  </Fragment>
-);
+	<Fragment>
+		<Navigation />
+		<Album albumId={albumId} />
+	</Fragment>
+)
 
 const MonthAlbumPage = ({
-  year,
-  month,
-  photoId,
+	year,
+	month,
+	photoId,
 }: {
-  year: string;
-  month: string;
-  photoId?: string;
+	year: string
+	month: string
+	photoId?: string
 }) => (
-  <Fragment>
-    <Navigation />
-    <PhotosByMonth year={year} month={month} photoId={photoId} />
-  </Fragment>
-);
+	<Fragment>
+		<Navigation />
+		<PhotosByMonth year={year} month={month} photoId={photoId} />
+	</Fragment>
+)
 const PhotoPage = ({
-  albumId,
-  photoId,
+	albumId,
+	photoId,
 }: {
-  albumId: string;
-  photoId: string;
-}) => <Album albumId={albumId} photoId={photoId} />;
+	albumId: string
+	photoId: string
+}) => <Album albumId={albumId} photoId={photoId} />
 
 export const App = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-
-      <Router>
-        <Route path="/" component={AlbumsPage} />
-        <Route path="/photos" component={PhotosPage} />
-        <Route path="/photo/:photoId" component={SinglePhotoPage} />
-        <Route path="/album/:albumId" component={AlbumPage} />
-        <Route path="/takenAt/:year/:month" component={MonthAlbumPage} />
-        <Route
-          path="/takenAt/:year/:month/:photoId"
-          component={MonthAlbumPage}
-        />
-        <Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
-      </Router>
-    </ThemeProvider>
-  );
-};
+	return (
+		<ThemeProvider theme={theme}>
+			<GlobalStyle />
+			<ScrollingProvider>
+				<Router>
+					<Route path="/" component={AlbumsPage} />
+					<Route path="/photos" component={PhotosPage} />
+					<Route path="/photo/:photoId" component={SinglePhotoPage} />
+					<Route path="/album/:albumId" component={AlbumPage} />
+					<Route path="/takenAt/:year/:month" component={MonthAlbumPage} />
+					<Route
+						path="/takenAt/:year/:month/:photoId"
+						component={MonthAlbumPage}
+					/>
+					<Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
+				</Router>
+			</ScrollingProvider>
+		</ThemeProvider>
+	)
+}

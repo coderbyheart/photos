@@ -36,6 +36,15 @@ const Fullscreen = styled.div`
 	align-content: center;
 	justify-content: center;
 	align-items: center;
+	@keyframes fadeIn {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	animation: fadeIn ease 0.5s;
 `
 const PrevNav = styled.div`
 	position: absolute;

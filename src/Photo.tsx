@@ -2,7 +2,6 @@ import { Fragment } from 'preact'
 import { Link } from 'preact-router'
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
 import styled from 'styled-components'
-import { sized } from './contentful'
 import { ChevronLeft as PrevIcon } from './icons/ChevronLeft'
 import { ChevronRight as NextIcon } from './icons/ChevronRight'
 import { Download as DownloadIcon } from './icons/Download'
@@ -10,6 +9,7 @@ import { MapPin as MapIcon } from './icons/MapPin'
 import { X as CloseIcon } from './icons/X'
 import { License } from './License'
 import { PhotoCaption } from './PhotoCaption'
+import { sized } from './resized'
 
 export const Dim = styled.div`
 	display: flex;
@@ -142,10 +142,13 @@ export const Photo = ({
 					setVideo(undefined)
 					setPhoto({ ...p, id })
 					setPhotoSrc(
-						sized({
-							width: document.documentElement.clientWidth,
-							height: document.documentElement.clientHeight,
-						})({ ...p, id }),
+						sized(
+							{
+								width: document.documentElement.clientWidth,
+								height: document.documentElement.clientHeight,
+							},
+							{ ...p, id },
+						),
 					)
 				} else {
 					setPhoto(undefined)

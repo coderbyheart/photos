@@ -5,8 +5,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { AlbumThumb, Gallery, VideoThumb } from './AlbumGallery'
 import { AlbumMap } from './AlbumMap'
-import { sized, thumb } from './contentful'
 import { Photo, PhotoEl } from './Photo'
+import { sized, thumb } from './resized'
 
 const Header = styled.header`
 	display: flex;
@@ -108,10 +108,13 @@ export const Album = ({
 					ref={el}
 					style={{
 						backgroundImage: cover
-							? `url(${sized({
-									width: document.documentElement.clientWidth,
-									height: document.documentElement.clientHeight,
-							  })(cover)})`
+							? `url(${sized(
+									{
+										width: document.documentElement.clientWidth,
+										height: document.documentElement.clientHeight,
+									},
+									cover,
+							  )})`
 							: undefined,
 					}}
 				>
@@ -198,7 +201,7 @@ const PhotoNavigator = ({
 					.then((res) => res.json())
 					.then(async ({ url, image }) => {
 						if (image !== undefined) {
-							fetch(sized(size)({ url }))
+							fetch(sized(size, { url }))
 						}
 					})
 			}}
@@ -268,7 +271,7 @@ export const PhotoThumb = ({
 		<AlbumThumb
 			ref={el}
 			style={{
-				backgroundImage: photo ? `url(${thumb(250)(photo)})` : undefined,
+				backgroundImage: photo ? `url(${thumb(250, photo)})` : undefined,
 			}}
 			onClick={onClick}
 		/>

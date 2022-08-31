@@ -174,7 +174,7 @@ const MapMarker = ({
 	}, [])
 
 	let backgroundImage
-	if ('image' in media) backgroundImage = thumb(50)(media)
+	if ('image' in media) backgroundImage = thumb(50, media)
 	if ('video' in media && 'youtube' in media.video)
 		backgroundImage = `https://img.youtube.com/vi/${media.video.youtube}/hqdefault.jpg`
 

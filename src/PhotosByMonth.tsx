@@ -3,8 +3,8 @@ import { route } from 'preact-router'
 import { useEffect, useState } from 'preact/hooks'
 import { PhotoThumb } from './Album'
 import { Gallery } from './AlbumGallery'
-import { sized } from './contentful'
 import { Photo } from './Photo'
+import { sized } from './resized'
 
 export const PhotosByMonth = ({
 	photoId,
@@ -50,7 +50,7 @@ export const PhotosByMonth = ({
 						// Preload next image
 						fetch(`/data/photos/${getNextPhotoId(2)}.json`)
 							.then((res) => res.json())
-							.then(({ url }) => fetch(sized(size)({ url })))
+							.then(({ url }) => fetch(sized(size, { url })))
 					}}
 				/>
 			)}

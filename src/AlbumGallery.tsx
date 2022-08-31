@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import { Link, route } from 'preact-router'
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
-import { sized } from './contentful'
+import { sized } from './resized'
 
 export const Gallery = styled.section`
 	display: grid;
@@ -119,10 +119,13 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
 			style={{
 				backgroundImage:
 					cover && el.current !== null
-						? `url(${sized({
-								width: el.current?.clientWidth,
-								height: el.current?.clientHeight,
-						  })(cover)})`
+						? `url(${sized(
+								{
+									width: el.current?.clientWidth,
+									height: el.current?.clientHeight,
+								},
+								cover,
+						  )})`
 						: undefined,
 			}}
 			onClick={() => {

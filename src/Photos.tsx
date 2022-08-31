@@ -4,9 +4,9 @@ import { useEffect, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { PhotoThumb } from './Album'
 import { Gallery } from './AlbumGallery'
-import { sized } from './contentful'
 import { LoadMoreButton } from './LoadMoreButton'
 import { Photo } from './Photo'
+import { sized } from './resized'
 
 const Button = styled.button`
 	background: transparent;
@@ -48,7 +48,7 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
 						// Preload next image
 						fetch(`/data/photos/${getNextPhotoId(2)}.json`)
 							.then((res) => res.json())
-							.then(({ url }) => fetch(sized(size)({ url })))
+							.then(({ url }) => fetch(sized(size, { url })))
 					}}
 				/>
 			)}

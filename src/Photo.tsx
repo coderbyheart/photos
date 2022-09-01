@@ -2,6 +2,7 @@ import { Fragment } from 'preact'
 import { Link } from 'preact-router'
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
 import styled from 'styled-components'
+import { cachedFetch } from './cachedFetch'
 import { ChevronLeft as PrevIcon } from './icons/ChevronLeft'
 import { ChevronRight as NextIcon } from './icons/ChevronRight'
 import { Download as DownloadIcon } from './icons/Download'
@@ -118,6 +119,17 @@ const LoadingPhoto = styled.div`
 	align-items: center;
 	color: var(--text-color-light);
 	opacity: 0.5;
+	code {
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+		animation: fadeIn ease 0.5s;
+	}
 `
 
 export const Photo = ({
@@ -155,8 +167,7 @@ export const Photo = ({
 
 	useEffect(() => {
 		let isMounted = true
-		fetch(`/data/photos/${id}.json`)
-			.then((res) => res.json())
+		cachedFetch<Photo | Video>(`/data/photos/${id}.json`)
 			.then((p) => {
 				if (!isMounted) return
 				if ('image' in p) {
@@ -168,7 +179,7 @@ export const Photo = ({
 								width: document.documentElement.clientWidth,
 								height: document.documentElement.clientHeight,
 							},
-							{ ...p, id },
+							p,
 						),
 					)
 				} else {

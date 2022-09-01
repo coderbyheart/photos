@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { AlbumThumb, Gallery, VideoThumb } from './AlbumGallery'
 import { AlbumMap } from './AlbumMap'
+import { cachedFetch } from './cachedFetch'
 import { Photo, PhotoEl } from './Photo'
 import { sized, thumb } from './resized'
 
@@ -198,13 +199,13 @@ const PhotoNavigator = ({
 			}}
 			onLoad={(size) => {
 				// Preload next image
-				fetch(`/data/photos/${getNextPhotoId(2)}.json`)
-					.then((res) => res.json())
-					.then(async ({ url, image }) => {
-						if (image !== undefined) {
-							fetch(sized(size, { url }))
-						}
-					})
+				cachedFetch<Photo | Video>(
+					`/data/photos/${getNextPhotoId(2)}.json`,
+				).then(async (media) => {
+					if ('image' in media) {
+						fetch(sized(size, media))
+					}
+				})
 			}}
 			onClose={onClose}
 		/>
@@ -240,8 +241,7 @@ export const PhotoThumb = ({
 	useEffect(() => {
 		if (!visible) return
 		let mounted = true
-		fetch(`/data/photos/${id}.json`)
-			.then((res) => res.json())
+		cachedFetch<Photo | Video>(`/data/photos/${id}.json`)
 			.then((p) => {
 				if (!mounted) return
 				if ('image' in p) {

@@ -5,9 +5,10 @@ import { Album } from './Album'
 import { AlbumGallery } from './AlbumGallery'
 import { Navigation } from './Navigation'
 import { Photos } from './Photos'
-
 import { PhotosByMonth } from './PhotosByMonth'
+import { PhotosByTag } from './PhotosByTag'
 import './reset.css'
+import { Tags } from './Tags'
 import { ScrollingProvider } from './useScroll'
 
 const theme = {
@@ -90,6 +91,26 @@ const PhotoPage = ({
 	photoId: string
 }) => <Album albumId={albumId} photoId={photoId} />
 
+const TagsPage = () => (
+	<Fragment>
+		<Navigation />
+		<Tags />
+	</Fragment>
+)
+
+const TaggedPhotoPage = ({
+	tag,
+	photoId,
+}: {
+	tag: string
+	photoId?: string
+}) => (
+	<Fragment>
+		<Navigation />
+		<PhotosByTag tag={tag} photoId={photoId} />
+	</Fragment>
+)
+
 export const App = () => {
 	return (
 		<ThemeProvider theme={theme}>
@@ -106,6 +127,9 @@ export const App = () => {
 						component={MonthAlbumPage}
 					/>
 					<Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
+					<Route path="/tag/:tag/:photoId" component={TaggedPhotoPage} />
+					<Route path="/tag/:tag" component={TaggedPhotoPage} />
+					<Route path="/tags" component={TagsPage} />
 				</Router>
 			</ScrollingProvider>
 		</ThemeProvider>

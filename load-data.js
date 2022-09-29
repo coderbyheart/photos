@@ -96,13 +96,15 @@ const main = async () => {
 						)
 						const doc = await parse(await fs.readFile(source, 'utf-8'))
 						const slug = path.parse(f).name
-						doc.tags?.map((tag) => {
-							if (tags[tag] === undefined) {
-								tags[tag] = [slug]
-							} else {
-								tags[tag].push(slug)
-							}
-						})
+						doc.tags
+							?.map((tag) => tag.toLowerCase())
+							.forEach((tag) => {
+								if (tags[tag] === undefined) {
+									tags[tag] = [slug]
+								} else {
+									tags[tag].push(slug)
+								}
+							})
 						const sourceModified = (await fs.stat(source)).mtime
 						let targetModified = -1
 						try {
@@ -166,10 +168,7 @@ const main = async () => {
 				// Write tags
 				await writeFile(
 					path.join(process.cwd(), 'public', 'data', `photos-tags.json`),
-					Object.entries(tags)
-						.sort(([, v1], [, v2]) => v2.length - v1.length)
-						.filter(([, v]) => v.length > 1)
-						.reduce((t, [k, v]) => ({ ...t, [k]: v })),
+					tags,
 				)
 			}),
 	])

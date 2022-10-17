@@ -1,0 +1,26 @@
+---
+title: Mushroom tour with NoVel
+createdAt: "2022-11-18T00:00:00.000Z"
+cover: 20220906T194654-de7abd55
+photos:
+  - 20220906T151306-APgT9WFQStg
+  - 20220906T151306-955b7471
+  - 20220906T151333-9ec76c15
+  - 20220906T160751-59b47ecf
+  - 20220906T161037-031f8c7a
+  - 20220906T161118-796046bf
+  - 20220906T163523-42d7dbc6
+  - 20220906T174400-7d3c8055
+  - 20220906T174554-1e5e9053
+  - 20220906T174605-92c02077
+  - 20220906T174616-9d13043e
+  - 20220906T194654-de7abd55
+  - 20220906T194734-a52ad6e6
+  - 20220906T194743-451e0207
+  - 20220906T195621-e506088b
+  - 20220906T195640-440393cb
+---
+
+Mushroom tour with NoVel (the employee wellfare organization of Nordic
+Semiconductor) and
+[Norges sopp- og nyttevekstforbund](https://soppognyttevekster.no/).

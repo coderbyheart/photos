@@ -35,6 +35,16 @@ const Header = styled.header`
 	}
 `
 
+const Subtitle = styled.span`
+	display: none;
+	&:before {
+		content: ' · ';
+	}
+	@media (min-width: ${(props) => props.theme.mobileBreakpoint}) {
+		display: inline;
+	}
+`
+
 export const Navigation = () => (
 	<Header>
 		<section>
@@ -42,8 +52,7 @@ export const Navigation = () => (
 				<a href={'https://coderbyheart.com'} rel="me">
 					<strong>Markus Tacker</strong>
 				</a>
-				{' · '}
-				Photos
+				<Subtitle>Photos</Subtitle>
 			</h1>
 			<nav>
 				<Link href="/">Albums</Link>

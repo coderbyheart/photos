@@ -49,7 +49,6 @@ export const Navigation = () => (
 				<Link href="/">Albums</Link>
 				<Link href="/photos">All photos</Link>
 				<Link href="/tags">Tags</Link>
-				<Link href="/map">Map</Link>
 			</nav>
 		</section>
 	</Header>

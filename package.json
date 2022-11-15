@@ -11,24 +11,24 @@
   },
   "dependencies": {
     "date-fns": "2.29.3",
-    "mapbox-gl": "2.10.0",
-    "preact": "10.11.2",
+    "mapbox-gl": "2.11.0",
+    "preact": "10.11.3",
     "preact-router": "4.1.0",
     "remark-frontmatter": "4.0.1",
     "styled-components": "5.3.6"
   },
   "devDependencies": {
-    "@nordicsemiconductor/asset-tracker-cloud-code-style": "11.0.133",
-    "@nordicsemiconductor/eslint-config-asset-tracker-cloud-typescript": "10.0.47",
-    "@nordicsemiconductor/from-env": "1.0.2",
+    "@nordicsemiconductor/asset-tracker-cloud-code-style": "11.0.140",
+    "@nordicsemiconductor/eslint-config-asset-tracker-cloud-typescript": "10.0.48",
+    "@nordicsemiconductor/from-env": "1.0.3",
     "@preact/preset-vite": "2.4.0",
     "@testing-library/preact": "3.2.2",
-    "@types/mapbox-gl": "2.7.6",
+    "@types/mapbox-gl": "2.7.7",
     "@types/styled-components": "5.1.26",
     "bottleneck": "^2.19.5",
-    "chai": "4.3.6",
-    "contentful-management": "10.18.1",
-    "husky": "8.0.1",
+    "chai": "4.3.7",
+    "contentful-management": "10.20.1",
+    "husky": "8.0.2",
     "js-yaml": "^4.1.0",
     "lint-staged": "13.0.3",
     "prettier": "2.7.1",
@@ -39,7 +39,7 @@
     "remark-html": "15.0.1",
     "remark-rehype": "10.1.0",
     "typescript": "4.8.4",
-    "vite": "3.1.8"
+    "vite": "3.2.3"
   },
   "lint-staged": {
     "*.{md,json,yaml,yml,js}": [

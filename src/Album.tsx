@@ -279,7 +279,15 @@ export const PhotoThumb = ({
 			style={{
 				backgroundImage: photo ? `url(${thumb(250, photo)})` : undefined,
 			}}
-			onClick={onClick}
+			onClick={(e) => {
+				if (e.ctrlKey) {
+					if (photo?.license !== 'None' && photo?.url !== undefined) {
+						window.open(photo.url, '_blank')
+					}
+				} else {
+					onClick()
+				}
+			}}
 		/>
 	)
 }

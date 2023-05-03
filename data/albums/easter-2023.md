@@ -2,6 +2,9 @@
 title: Easter 2023
 createdAt: 2023-05-03T22:00:00.000Z
 cover: 20230331T161342-922c954d
+geo:
+  lat: 59.347480555555556
+  lng: 10.894275
 photos:
   - 20230325T112559-b31724a3
   - 20230325T181218-8a7e5756
@@ -80,5 +83,5 @@ photos:
 ---
 
 Trip to Germany during Easter 2023. First we drove to Bergen with a stop for
-[BoosterConf 2023}(/album/boosterconf-2023), then continued to the ferry from
+[BoosterConf 2023](/album/boosterconf-2023), then continued to the ferry from
 Göteborg to Kiel and drove via Hamburg to Offenbach and back via Kiel and Oslo.

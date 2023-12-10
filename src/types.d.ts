@@ -28,6 +28,11 @@ type Media = {
 
 type Photo = Media & {
 	image: { width: number; height: number }
+	thumbnail?: string // e.g. `data:image/webp;base64,UklGRmAAAABXR...`
+}
+
+type PhotoWithThumbnail = Photo & {
+	thumbnail: string // e.g. `data:image/webp;base64,UklGRmAAAABXR...`
 }
 
 type Video = Media & {

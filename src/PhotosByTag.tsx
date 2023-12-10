@@ -49,7 +49,9 @@ export const PhotosByTag = ({
 						// Preload next image
 						fetch(`/data/photos/${getNextPhotoId(2)}.json`)
 							.then((res) => res.json())
-							.then(({ url }) => fetch(sized(size, { url })))
+							.then(({ url }) =>
+								fetch(sized(size, { url }), { mode: 'no-cors' }),
+							)
 					}}
 				/>
 			)}

@@ -5,8 +5,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { AlbumThumb, Gallery, VideoThumb } from './AlbumGallery'
 import { AlbumMap } from './AlbumMap'
-import { cachedFetch } from './cachedFetch'
 import { Photo, PhotoEl } from './Photo'
+import { cachedFetch } from './cachedFetch'
 import { sized, thumb } from './resized'
 
 const Header = styled.header`
@@ -203,7 +203,9 @@ const PhotoNavigator = ({
 					`/data/photos/${getNextPhotoId(2)}.json`,
 				).then(async (media) => {
 					if ('image' in media) {
-						fetch(sized(size, media))
+						fetch(sized(size, media), {
+							mode: 'no-cors',
+						})
 					}
 				})
 			}}
@@ -273,6 +275,12 @@ export const PhotoThumb = ({
 		)
 	}
 
+	if (photo !== undefined && photo.thumbnail !== undefined) {
+		return (
+			<WithThumbnail photo={photo as PhotoWithThumbnail} onClick={onClick} />
+		)
+	}
+
 	return (
 		<AlbumThumb
 			ref={el}
@@ -289,5 +297,54 @@ export const PhotoThumb = ({
 				}
 			}}
 		/>
+	)
+}
+
+const WithThumbnail = ({
+	photo,
+	onClick,
+}: {
+	photo: PhotoWithThumbnail
+	onClick: () => unknown
+}) => {
+	const [url, setURL] = useState<string>()
+	useEffect(() => {
+		const thumbUrl = thumb(250, photo)
+		fetch(thumbUrl, {
+			mode: 'no-cors',
+		}).then(() => {
+			setURL(thumbUrl)
+		})
+	}, [])
+
+	if (url !== undefined)
+		return (
+			<AlbumThumb
+				style={{
+					backgroundImage: `url(${url})`,
+				}}
+				onClick={(e) => {
+					if (e.ctrlKey) {
+						if (photo?.license !== 'None' && photo?.url !== undefined) {
+							window.open(photo.url, '_blank')
+						}
+					} else {
+						onClick()
+					}
+				}}
+			/>
+		)
+
+	return (
+		<div style={{ overflow: 'hidden' }}>
+			<img
+				src={photo.thumbnail}
+				style={{
+					filter: 'blur(20px)',
+					width: '100%',
+					aspectRatio: '1/1',
+				}}
+			/>
+		</div>
 	)
 }

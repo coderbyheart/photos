@@ -2,14 +2,14 @@ import { Fragment } from 'preact'
 import { Link } from 'preact-router'
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
 import styled from 'styled-components'
+import { License } from './License'
+import { PhotoCaption } from './PhotoCaption'
 import { cachedFetch } from './cachedFetch'
 import { ChevronLeft as PrevIcon } from './icons/ChevronLeft'
 import { ChevronRight as NextIcon } from './icons/ChevronRight'
 import { Download as DownloadIcon } from './icons/Download'
 import { MapPin as MapIcon } from './icons/MapPin'
 import { X as CloseIcon } from './icons/X'
-import { License } from './License'
-import { PhotoCaption } from './PhotoCaption'
 import { sized } from './resized'
 
 export const Dim = styled.div`
@@ -202,7 +202,9 @@ export const Photo = ({
 
 	useEffect(() => {
 		if (photoSrc === undefined) return
-		fetch(photoSrc).then(() =>
+		fetch(photoSrc, {
+			mode: 'no-cors',
+		}).then(() =>
 			onLoad?.({
 				width: document.documentElement.clientWidth,
 				height: document.documentElement.clientHeight,

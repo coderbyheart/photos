@@ -148,6 +148,7 @@ export const Photo = ({
 	const [photo, setPhoto] = useState<Photo | undefined>(undefined)
 	const [photoSrc, setPhotoSrc] = useState<string | undefined>(undefined)
 	const [video, setVideo] = useState<Video | undefined>(undefined)
+	const [loaded, setLoaded] = useState<boolean>(false)
 
 	useLayoutEffect(() => {
 		window.onkeyup = ({ key }: KeyboardEvent) => {
@@ -182,9 +183,11 @@ export const Photo = ({
 							p,
 						),
 					)
+					setLoaded(false)
 				} else {
 					setPhoto(undefined)
 					setPhotoSrc(undefined)
+					setLoaded(false)
 					setVideo({ ...p, id })
 					onLoad?.({
 						width: document.documentElement.clientWidth,
@@ -204,12 +207,13 @@ export const Photo = ({
 		if (photoSrc === undefined) return
 		fetch(photoSrc, {
 			mode: 'no-cors',
-		}).then(() =>
+		}).then(() => {
+			setLoaded(true)
 			onLoad?.({
 				width: document.documentElement.clientWidth,
 				height: document.documentElement.clientHeight,
-			}),
-		)
+			})
+		})
 	}, [photoSrc])
 
 	if (photo === undefined && video === undefined)
@@ -224,7 +228,15 @@ export const Photo = ({
 	return (
 		<PhotoEl>
 			<Dim>
-				{photoSrc && (
+				{!loaded && photo?.preview !== undefined && (
+					<Fullscreen
+						style={{
+							backgroundImage: `url(${photo.preview})`,
+							filter: 'blur(20px)',
+						}}
+					/>
+				)}
+				{photoSrc && loaded && (
 					<Fullscreen
 						style={{
 							backgroundImage: photoSrc ? `url(${photoSrc})` : undefined,

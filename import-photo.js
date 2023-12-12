@@ -46,9 +46,12 @@ const importPhoto = async (photo) => {
 		}),
 	)
 
-	// Preview image
+	// Preview images
 	// @see https://transitive-bullshit.github.io/lqip-modern/
 	const thumbnail = await fetch(`${PhotosCDNEndpoint}${Key}?f=placeholder`, {
+		redirect: 'follow',
+	})
+	const preview = await fetch(`${PhotosCDNEndpoint}${Key}?f=preview`, {
 		redirect: 'follow',
 	})
 	const orig = thumbnail.headers.get('x-amz-meta-original') // e.g. '/2023-12-10/IMG20231207121810.jpg JPEG 3456x4608 8-bit sRGB'
@@ -75,6 +78,9 @@ const importPhoto = async (photo) => {
 					},
 					thumbnail: `data:image/webp;base64,${Buffer.from(
 						await thumbnail.arrayBuffer(),
+					).toString('base64')}`,
+					preview: `data:image/webp;base64,${Buffer.from(
+						await preview.arrayBuffer(),
 					).toString('base64')}`,
 					geo: geoInfo,
 					contentType,

@@ -20,6 +20,11 @@ export const PhotosByMonth = ({
 		fetch(`/data/photos-byMonth-${year}-${month}.json`)
 			.then((res) => res.json())
 			.then((p) => setPhotos((photos) => [...photos, ...p]))
+			.catch(() => {
+				console.error(
+					`Failed to load /data/photos-byMonth-${year}-${month}.json!`,
+				)
+			})
 	}, [year, month])
 	if (photos.length === 0) return <p>Loading ...</p>
 	const getNextPhotoId = (increment = 1) =>
@@ -53,6 +58,11 @@ export const PhotosByMonth = ({
 							.then(({ url }) =>
 								fetch(sized(size, { url }), { mode: 'no-cors' }),
 							)
+							.catch(() => {
+								console.error(
+									`Failed to load /data/photos/${getNextPhotoId(2)}.json!`,
+								)
+							})
 					}}
 				/>
 			)}

@@ -96,6 +96,9 @@ export const Tags = () => {
 						.sort(({ count: c1 }, { count: c2 }) => c2 - c1),
 				)
 			})
+			.catch(() => {
+				console.error(`Failed to load /data/photos-tags.json!`)
+			})
 	}, [])
 
 	return (

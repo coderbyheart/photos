@@ -68,6 +68,9 @@ export const AlbumGallery = () => {
 					Object.entries(albums).map(([id, album]) => ({ ...album, id })),
 				),
 			)
+			.catch(() => {
+				console.error(`Failed to load albums`)
+			})
 	}, [])
 
 	if (albums.length === 0) return <p>Loading ...</p>

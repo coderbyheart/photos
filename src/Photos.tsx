@@ -22,6 +22,9 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
 		fetch(`/data/photos-takenAt-${page}.json`)
 			.then((res) => res.json())
 			.then((p) => setPhotos((photos) => [...photos, ...p]))
+			.catch(() => {
+				console.error(`Failed to load /data/photos-takenAt-${page}.json!`)
+			})
 	}, [page])
 	if (photos.length === 0) return <p>Loading ...</p>
 	const getNextPhotoId = (increment = 1) =>
@@ -53,6 +56,9 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
 									mode: 'no-cors',
 								}),
 							)
+							.catch(() => {
+								console.error(`/data/photos/${getNextPhotoId(2)}.json`)
+							})
 					}}
 				/>
 			)}

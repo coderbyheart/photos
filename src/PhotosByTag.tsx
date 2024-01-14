@@ -20,6 +20,9 @@ export const PhotosByTag = ({
 		fetch('/data/photos-tags.json')
 			.then((res) => res.json())
 			.then((p) => setTaggedPhotos(p))
+			.catch(() => {
+				console.error(`Failed to load /data/photos-tags.json!`)
+			})
 	}, [])
 	if (Object.keys(taggedPhotos).length === 0) return <p>Loading ...</p>
 	const getNextPhotoId = (increment = 1) =>
@@ -52,6 +55,9 @@ export const PhotosByTag = ({
 							.then(({ url }) =>
 								fetch(sized(size, { url }), { mode: 'no-cors' }),
 							)
+							.catch(() => {
+								console.error(`/data/photos/${getNextPhotoId(2)}.json`)
+							})
 					}}
 				/>
 			)}

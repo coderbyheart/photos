@@ -44,7 +44,10 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 				album.photos.map((id) =>
 					fetch(`/data/photos/${id}.json`)
 						.then((res) => res.json())
-						.then((photo) => ({ ...photo, id })),
+						.then((photo) => ({ ...photo, id }))
+						.catch(() => {
+							console.error(`Failed to load photo ${id}!`)
+						}),
 				),
 			)
 				.then((withMaybeLocation) =>

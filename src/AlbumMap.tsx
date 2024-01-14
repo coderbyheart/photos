@@ -47,6 +47,7 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 						.then((photo) => ({ ...photo, id }))
 						.catch(() => {
 							console.error(`Failed to load photo ${id}!`)
+							return {}
 						}),
 				),
 			)

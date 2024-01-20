@@ -1,0 +1,31 @@
+---
+title: Snowshoe hike in Bymarka, Trondheim
+createdAt: "2024-01-24T20:00:00.000Z"
+cover: 20240120T161257-fa927e2c
+photos:
+  - 20240120T010000-7CTB4Id_DzM
+  - 20240120T100904-dd8b3a6c
+  - 20240120T105657-19297711
+  - 20240120T110029-76b20d3f
+  - 20240120T112144-2b4c195a
+  - 20240120T112659-085a9b08
+  - 20240120T114916-da2aeabc
+  - 20240120T115656-ba5bf92b
+  - 20240120T124548-c87e1788
+  - 20240120T130237-b0b8df55
+  - 20240120T130544-9d4cdd9c
+  - 20240120T133109-1326d287
+  - 20240120T133146-72f2a1c1
+  - 20240120T134140-66537034
+  - 20240120T161124-37375393
+  - 20240120T161136-dabffcc3
+  - 20240120T161159-ea662d93
+  - 20240120T161211-1b208457
+  - 20240120T161224-dbd835d1
+  - 20240120T161245-75f61d3d
+  - 20240120T161257-fa927e2c
+---
+
+There was fantastic weather today so I went on a 7 km hike starting at Skistua
+down to Grønnlia and then towards Lian. This is my way of getting a bit away
+from the crowded ski loipes.

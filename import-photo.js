@@ -24,12 +24,15 @@ const importPhoto = async (photo) => {
 		throw new Error(`Could read exif data for ${photo}!`)
 	}
 
-	const takenAt = new Date(
-		mediaInfo.Image.DateTime.replace(
-			/^([0-9]{4}):([0-9]{2}):([0-9]{2}) /,
-			'$1-$2-$3T',
-		),
-	)
+	const takenAt =
+		mediaInfo?.Image?.DateTime !== undefined
+			? new Date(
+					mediaInfo.Image.DateTime.replace(
+						/^([0-9]{4}):([0-9]{2}):([0-9]{2}) /,
+						'$1-$2-$3T',
+					),
+			  )
+			: new Date()
 
 	const fileName = `${takenAt
 		.toISOString()

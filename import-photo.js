@@ -39,6 +39,13 @@ const importPhoto = async (photo) => {
 		.substr(0, 19)
 		.replace(/[-:]/g, '')}-${checksum}`
 	const outFile = path.join(process.cwd(), 'data', 'photos', `${fileName}.md`)
+	try {
+		await fs.stat(outFile)
+		console.log(photo, outFile, 'exists')
+		process.exit(1)
+	} catch {
+		// pass
+	}
 
 	const Key = `${new Date().toISOString().slice(0, 10)}/${base}`
 	await s3.send(
@@ -58,6 +65,7 @@ const importPhoto = async (photo) => {
 		redirect: 'follow',
 	})
 	const orig = thumbnail.headers.get('x-amz-meta-original') // e.g. '/2023-12-10/IMG20231207121810.jpg JPEG 3456x4608 8-bit sRGB'
+	if (orig === null) throw new Error(`Failed to convert ${photo}!`)
 	const [width, height] = orig
 		.split(' ')[2]
 		.split('x')

@@ -1,10 +1,10 @@
 import { Fragment } from 'preact'
-import { route } from 'preact-router'
 import { useEffect, useState } from 'preact/hooks'
 import { PhotoThumb } from './Album'
 import { Gallery } from './AlbumGallery'
 import { Photo } from './Photo'
 import { sized } from './resized'
+import { useLocation } from 'preact-iso'
 
 export const PhotosByMonth = ({
 	photoId,
@@ -16,6 +16,7 @@ export const PhotosByMonth = ({
 	month: string
 }) => {
 	const [photos, setPhotos] = useState<string[]>([])
+	const { route } = useLocation()
 	useEffect(() => {
 		fetch(`/data/photos-byMonth-${year}-${month}.json`)
 			.then((res) => res.json())

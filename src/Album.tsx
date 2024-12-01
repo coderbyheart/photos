@@ -1,6 +1,5 @@
 import { format } from 'date-fns'
 import { Fragment } from 'preact'
-import { route } from 'preact-router'
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { AlbumThumb, Gallery, VideoThumb } from './AlbumGallery'
@@ -8,6 +7,7 @@ import { AlbumMap } from './AlbumMap'
 import { Photo, PhotoEl } from './Photo'
 import { cachedFetch } from './cachedFetch'
 import { sized, thumb } from './resized'
+import { useLocation } from 'preact-iso'
 
 const Header = styled.header`
 	display: flex;
@@ -80,6 +80,7 @@ export const Album = ({
 	const [album, setAlbum] = useState<Album | undefined>(undefined)
 	const [cover, setCover] = useState<Photo | undefined>(undefined)
 	const el = useRef<HTMLHeadElement>(null)
+	const { route } = useLocation()
 	useEffect(() => {
 		fetch('/data/albums.json')
 			.then((res) => res.json())
@@ -110,12 +111,12 @@ export const Album = ({
 					style={{
 						backgroundImage: cover
 							? `url(${sized(
-									{
-										width: document.documentElement.clientWidth,
-										height: document.documentElement.clientHeight,
-									},
-									cover,
-							  )})`
+								{
+									width: document.documentElement.clientWidth,
+									height: document.documentElement.clientHeight,
+								},
+								cover,
+							)})`
 							: undefined,
 					}}
 				>
@@ -174,8 +175,9 @@ const PhotoNavigator = ({
 }) => {
 	const getNextPhotoId = (increment = 1) =>
 		album.photos[
-			(album.photos.indexOf(photoId) + increment) % album.photos.length
+		(album.photos.indexOf(photoId) + increment) % album.photos.length
 		]
+	const { route } = useLocation()
 	return (
 		<Photo
 			id={photoId}

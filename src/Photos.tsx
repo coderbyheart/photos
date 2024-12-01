@@ -1,5 +1,4 @@
 import { Fragment } from 'preact'
-import { route } from 'preact-router'
 import { useEffect, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { PhotoThumb } from './Album'
@@ -7,6 +6,7 @@ import { Gallery } from './AlbumGallery'
 import { LoadMoreButton } from './LoadMoreButton'
 import { Photo } from './Photo'
 import { sized } from './resized'
+import { useLocation } from 'preact-iso'
 
 const Button = styled.button`
 	background: transparent;
@@ -18,6 +18,7 @@ const Button = styled.button`
 export const Photos = ({ photoId }: { photoId?: string }) => {
 	const [page, setPage] = useState(0)
 	const [photos, setPhotos] = useState<string[]>([])
+	const { route } = useLocation()
 	useEffect(() => {
 		fetch(`/data/photos-takenAt-${page}.json`)
 			.then((res) => res.json())

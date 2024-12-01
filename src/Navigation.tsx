@@ -1,4 +1,3 @@
-import { Link } from 'preact-router'
 import styled from 'styled-components'
 
 const Header = styled.header`
@@ -19,13 +18,9 @@ const Header = styled.header`
 		color: inherit;
 		text-decoration: none;
 	}
-	nav {
-		> a + a {
-			:before {
-				content: '·';
-				padding: 0.5rem;
-			}
-		}
+	nav a + a:before {
+		content: '·';
+		padding: 0.5rem;
 	}
 	section {
 		display: flex;
@@ -55,9 +50,9 @@ export const Navigation = () => (
 				<Subtitle>Photos</Subtitle>
 			</h1>
 			<nav>
-				<Link href="/">Albums</Link>
-				<Link href="/photos">All photos</Link>
-				<Link href="/tags">Tags</Link>
+				<a href="/">Albums</a>
+				<a href="/photos">All photos</a>
+				<a href="/tags">Tags</a>
 			</nav>
 		</section>
 	</Header>

@@ -1,9 +1,9 @@
 import mapboxgl from 'mapbox-gl'
-import { route } from 'preact-router'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
-import '../node_modules/mapbox-gl/src/css/mapbox-gl.css'
+import '../node_modules/mapbox-gl/dist/mapbox-gl.css'
 import { thumb } from './contentful'
+import { useLocation } from 'preact-iso'
 
 mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN
 
@@ -163,6 +163,7 @@ const MapMarker = ({
 	map: mapboxgl.Map
 }) => {
 	const markerRef = useRef(null)
+	const { route } = useLocation()
 
 	useEffect(() => {
 		if (markerRef.current === null) return

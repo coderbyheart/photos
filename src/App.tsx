@@ -1,5 +1,5 @@
 import { Fragment } from 'preact'
-import { Route, Router } from 'preact-router'
+import { LocationProvider, Route, Router } from 'preact-iso'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { Album } from './Album'
 import { AlbumGallery } from './AlbumGallery'
@@ -116,21 +116,24 @@ export const App = () => {
 		<ThemeProvider theme={theme}>
 			<GlobalStyle />
 			<ScrollingProvider>
-				<Router>
-					<Route path="/" component={AlbumsPage} />
-					<Route path="/photos" component={PhotosPage} />
-					<Route path="/photo/:photoId" component={SinglePhotoPage} />
-					<Route path="/album/:albumId" component={AlbumPage} />
-					<Route path="/takenAt/:year/:month" component={MonthAlbumPage} />
-					<Route
-						path="/takenAt/:year/:month/:photoId"
-						component={MonthAlbumPage}
-					/>
-					<Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
-					<Route path="/tag/:tag/:photoId" component={TaggedPhotoPage} />
-					<Route path="/tag/:tag" component={TaggedPhotoPage} />
-					<Route path="/tags" component={TagsPage} />
-				</Router>
+				<LocationProvider>
+					<Router>
+						<Route path="/" component={AlbumsPage} />
+						<Route path="/photos" component={PhotosPage} />
+						<Route path="/photo/:photoId" component={SinglePhotoPage} />
+						<Route path="/album/:albumId" component={AlbumPage} />
+						<Route path="/takenAt/:year/:month" component={MonthAlbumPage} />
+						<Route
+							path="/takenAt/:year/:month/:photoId"
+							component={MonthAlbumPage}
+						/>
+						<Route path="/album/:albumId/photo/:photoId" component={PhotoPage} />
+						<Route path="/tag/:tag/:photoId" component={TaggedPhotoPage} />
+						<Route path="/tag/:tag" component={TaggedPhotoPage} />
+						<Route path="/tags" component={TagsPage} />
+					</Router>
+
+				</LocationProvider>
 			</ScrollingProvider>
 		</ThemeProvider>
 	)

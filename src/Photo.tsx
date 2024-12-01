@@ -1,5 +1,4 @@
 import { Fragment } from 'preact'
-import { Link } from 'preact-router'
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { License } from './License'
@@ -265,7 +264,7 @@ export const Photo = ({
 				{media.tags &&
 					media.tags.map((tag, k) => (
 						<Fragment key={k}>
-							<Link href={`/tags/${tag}`}>#{tag}</Link>{' '}
+							<a href={`/tag/${encodeURIComponent(tag.toLowerCase())}`}>#{tag}</a>{' '}
 						</Fragment>
 					))}
 				{media.html && (

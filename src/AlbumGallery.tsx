@@ -1,8 +1,8 @@
 import { format } from 'date-fns'
-import { Link, route } from 'preact-router'
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import styled from 'styled-components'
 import { sized } from './resized'
+import { useLocation } from 'preact-iso'
 
 export const Gallery = styled.section`
 	display: grid;
@@ -53,7 +53,7 @@ const Info = styled.div`
 		font-size: 14px;
 	}
 `
-const StyledLink = styled(Link)`
+const StyledLink = styled.a`
 	color: var(--text-color-light);
 	text-decoration: none;
 `
@@ -87,6 +87,7 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
 	const el = useRef<HTMLDivElement>(null)
 	const [visible, setVisible] = useState(false)
 	const [cover, setCover] = useState<Photo | undefined>(undefined)
+	const { route } = useLocation()
 
 	useLayoutEffect(() => {
 		if (el.current !== null) {
@@ -123,12 +124,12 @@ const AlbumThumbnail = ({ album, id }: { album: Album; id: string }) => {
 				backgroundImage:
 					cover && el.current !== null
 						? `url(${sized(
-								{
-									width: el.current?.clientWidth,
-									height: el.current?.clientHeight,
-								},
-								cover,
-						  )})`
+							{
+								width: el.current?.clientWidth,
+								height: el.current?.clientHeight,
+							},
+							cover,
+						)})`
 						: undefined,
 			}}
 			onClick={() => {

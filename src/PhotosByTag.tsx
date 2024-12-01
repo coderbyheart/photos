@@ -1,10 +1,10 @@
 import { Fragment } from 'preact'
-import { route } from 'preact-router'
 import { useEffect, useState } from 'preact/hooks'
 import { PhotoThumb } from './Album'
 import { Gallery } from './AlbumGallery'
 import { Photo } from './Photo'
 import { sized } from './resized'
+import { useLocation } from 'preact-iso'
 
 export const PhotosByTag = ({
 	photoId,
@@ -16,6 +16,7 @@ export const PhotosByTag = ({
 	const [taggedPhotos, setTaggedPhotos] = useState<Record<string, string[]>>({})
 	const [page, setPage] = useState<number>(1)
 	const itemsPerPage = 50
+	const { route } = useLocation()
 	useEffect(() => {
 		fetch('/data/photos-tags.json')
 			.then((res) => res.json())
@@ -27,8 +28,8 @@ export const PhotosByTag = ({
 	if (Object.keys(taggedPhotos).length === 0) return <p>Loading ...</p>
 	const getNextPhotoId = (increment = 1) =>
 		taggedPhotos[tag][
-			(taggedPhotos[tag].indexOf(photoId ?? taggedPhotos[tag][0]) + increment) %
-				taggedPhotos[tag].length
+		(taggedPhotos[tag].indexOf(photoId ?? taggedPhotos[tag][0]) + increment) %
+		taggedPhotos[tag].length
 		]
 	return (
 		<Fragment>

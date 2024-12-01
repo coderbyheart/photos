@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'preact/hooks'
 import styled from 'styled-components'
-
-import { Link } from 'preact-router'
+import { useLocation } from 'preact-iso'
 
 const TagsNav = styled.nav`
 	color: var(--text-color-light);
@@ -74,7 +73,7 @@ const TagsNav = styled.nav`
 		}
 	}
 `
-const StyledLink = styled(Link)`
+const StyledLink = styled.a`
 	color: var(--text-color-light);
 	font-weight: var(--headline-normal-font-weight);
 	text-decoration: none;
@@ -82,6 +81,7 @@ const StyledLink = styled(Link)`
 
 export const Tags = () => {
 	const [tags, setTags] = useState<{ name: string; count: number }[]>([])
+	const { route } = useLocation()
 
 	useEffect(() => {
 		fetch('/data/photos-tags.json')

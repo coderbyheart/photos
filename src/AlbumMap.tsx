@@ -167,7 +167,7 @@ const MapMarker = ({
 
 	useEffect(() => {
 		if (markerRef.current === null) return
-		console.debug(`[AlbumMap:Marker]`, 'creating marker')
+		console.debug(`[AlbumMap:Marker]`, 'creating marker', media.geo)
 		const marker = new mapboxgl.Marker(markerRef.current)
 			.setLngLat(media.geo)
 			.addTo(map)

@@ -99,35 +99,60 @@ const Map = ({
 			zoom: 6,
 		})
 
-		if (album.track !== undefined) {
+		if (album.tracks !== undefined) {
 			map.on('load', () => {
-				map.addSource('route', {
-					type: 'geojson',
-					data: {
-						type: 'Feature',
-						properties: {},
-						geometry: {
-							type: 'LineString',
-							coordinates: (album.track as string[]).map((pos) =>
-								pos.split(',').map(parseFloat),
-							),
+				for (const [i, track] of album.tracks!.entries()) {
+					const routeId = `route-${i}`
+
+					map.addSource(routeId, {
+						type: 'geojson',
+						data: {
+							type: 'Feature',
+							properties: {},
+							geometry: {
+								type: 'LineString',
+								coordinates: (track.points as string[]).map((pos) =>
+								{
+									const [lat, lng] = pos.split(',').map(Number)
+									return [lng, lat]
+								},
+								),
+							},
 						},
-					},
-				})
-				map.addLayer({
-					id: 'route',
-					type: 'line',
-					source: 'route',
-					layout: {
-						'line-join': 'round',
-						'line-cap': 'round',
-					},
-					paint: {
-						'line-color': '#000000',
-						'line-opacity': 0.5,
-						'line-width': 6,
-					},
-				})
+					})
+					map.addLayer({
+						id: routeId,
+						type: 'line',
+						source: routeId,
+						layout: {
+							'line-join': 'round',
+							'line-cap': 'round',
+						},
+						paint: {
+							'line-color': '#000000',
+							'line-opacity': 0.5,
+							'line-width': 6,
+						},
+					})
+
+					if (track.name !== undefined) {
+						map.on('mouseenter', routeId, () => {
+							map.getCanvas().style.cursor = 'pointer'
+						})
+
+						map.on('mouseleave', routeId, () => {
+							map.getCanvas().style.cursor = ''
+						})
+
+						map.on('click', routeId, (event) => {
+							if (event.lngLat === undefined) return
+							new mapboxgl.Popup()
+								.setLngLat(event.lngLat)
+								.setText(track.name!)
+								.addTo(map)
+						})
+					}
+				}
 			})
 		}
 

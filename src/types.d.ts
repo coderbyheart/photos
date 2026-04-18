@@ -5,7 +5,11 @@ type Album = {
 	cover?: string
 	photos: string[]
 	html?: string
-	track?: string[]
+	tracks?: Array<{
+		points: string[]
+		name?: string
+		date?: string
+	}>
 	geo?: { lat: number; lng: number }
 }
 

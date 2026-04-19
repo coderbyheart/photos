@@ -9,11 +9,10 @@ mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN
 
 /** Distinct, saturated hues for GPX tracks on light basemaps (cycles if >20 tracks). */
 const TRACK_COLORS = [
-	'#E6194B', // vivid red
+	'#911EB4', // purple
 	'#3CB44B', // green
 	'#32CD32', // lime green
 	'#F58231', // orange
-	'#911EB4', // purple
 	'#42D4F4', // cyan
 	'#F032E6', // magenta
 	'#469990', // teal
@@ -29,6 +28,7 @@ const TRACK_COLORS = [
 	'#1E90FF', // dodger blue
 	'#8B008B', // dark magenta
 	'#228B22', // forest green
+	'#E6194B', // vivid red
 ] as const
 
 const AlbumContainer = styled.aside`
@@ -50,6 +50,25 @@ const MapIcon = styled.div`
 	border-radius: 10%;
 	cursor: pointer;
 	box-shadow: 0 0 5px 0px #00000073;
+`
+
+const MapDot = styled.div`
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background-color: transparent;
+	border: 2px solid #e00073;
+	cursor: pointer;
+`
+
+const ToggleLabel = styled.label`
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-size: 0.875rem;
+	justify-content: flex-end;
+	padding: 0.4rem 0;
+	cursor: pointer;
 `
 
 type MediaWithLocation = (Photo | Video) & {
@@ -111,6 +130,7 @@ const Map = ({
 }) => {
 	const mapRef = useRef(null)
 	const [mapInstance, setMapInstance] = useState<mapboxgl.Map>()
+	const [showThumbnails, setShowThumbnails] = useState(false)
 
 	useEffect(() => {
 		if (mapRef.current === null) return
@@ -192,10 +212,26 @@ const Map = ({
 
 	return (
 		<AlbumContainer>
+				<ToggleLabel>
+					<input
+						type="checkbox"
+						checked={showThumbnails}
+						onChange={(e) =>
+							setShowThumbnails((e.target as HTMLInputElement).checked)
+						}
+					/>
+					Show thumbnails
+				</ToggleLabel>
 			<MapContainer ref={mapRef}>
 				{mapInstance !== undefined &&
 					mediaWithLocation.map((media) => (
-						<MapMarker album={album} media={media} map={mapInstance} />
+						<MapMarker
+							key={media.id}
+							album={album}
+							media={media}
+							map={mapInstance}
+							showThumbnail={showThumbnails}
+						/>
 					))}
 			</MapContainer>
 		</AlbumContainer>
@@ -205,12 +241,14 @@ const MapMarker = ({
 	album,
 	media,
 	map,
+	showThumbnail,
 }: {
 	album: Album
 	media: MediaWithLocation
 	map: mapboxgl.Map
+	showThumbnail: boolean
 }) => {
-	const markerRef = useRef(null)
+	const markerRef = useRef<HTMLDivElement>(null)
 	const { route } = useLocation()
 
 	useEffect(() => {
@@ -226,27 +264,33 @@ const MapMarker = ({
 		}
 	}, [])
 
-	let backgroundImage
-	if ('image' in media) backgroundImage = thumb(50, media)
-	if ('video' in media && 'youtube' in media.video)
-		backgroundImage = `https://img.youtube.com/vi/${media.video.youtube}/hqdefault.jpg`
+	const handleClick = () => {
+		route(
+			`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(media.id)}`,
+		)
+	}
+
+	let backgroundImage: string | undefined
+	if (showThumbnail) {
+		if ('image' in media) backgroundImage = thumb(50, media)
+		if ('video' in media && 'youtube' in media.video)
+			backgroundImage = `https://img.youtube.com/vi/${media.video.youtube}/hqdefault.jpg`
+	}
 
 	return (
-		<MapIcon
-			ref={markerRef}
-			style={{
-				backgroundImage: backgroundImage
-					? `url(${backgroundImage})`
-					: undefined,
-			}}
-			onClick={() => {
-				route(
-					`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
-						media.id,
-					)}`,
-				)
-			}}
-		/>
+		<div ref={markerRef} onClick={handleClick}>
+			{showThumbnail ? (
+				<MapIcon
+					style={{
+						backgroundImage: backgroundImage
+							? `url(${backgroundImage})`
+							: undefined,
+					}}
+				/>
+			) : (
+				<MapDot />
+			)}
+		</div>
 	)
 }
 

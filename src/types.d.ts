@@ -6,6 +6,7 @@ type Album = {
 	photos: string[]
 	html?: string
 	tracks?: Array<{
+		color?: `#${string}`
 		points: string[]
 		name?: string
 		date?: string

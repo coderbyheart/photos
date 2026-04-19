@@ -7,6 +7,30 @@ import { useLocation } from 'preact-iso'
 
 mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN
 
+/** Distinct, saturated hues for GPX tracks on light basemaps (cycles if >20 tracks). */
+const TRACK_COLORS = [
+	'#E6194B', // vivid red
+	'#3CB44B', // green
+	'#32CD32', // lime green
+	'#F58231', // orange
+	'#911EB4', // purple
+	'#42D4F4', // cyan
+	'#F032E6', // magenta
+	'#469990', // teal
+	'#800000', // maroon
+	'#000075', // navy
+	'#6F2DBD', // violet
+	'#9A6324', // brown
+	'#FF1493', // deep pink
+	'#00CED1', // dark turquoise
+	'#4363D8', // blue
+	'#FFD700', // gold
+	'#DC143C', // crimson
+	'#1E90FF', // dodger blue
+	'#8B008B', // dark magenta
+	'#228B22', // forest green
+] as const
+
 const AlbumContainer = styled.aside`
 	background-color: var(--text-color-light);
 	color: var(--background-color-dark);
@@ -129,8 +153,8 @@ const Map = ({
 							'line-cap': 'round',
 						},
 						paint: {
-							'line-color': '#000000',
-							'line-opacity': 0.5,
+							'line-color': track.color ?? TRACK_COLORS[i % TRACK_COLORS.length],
+							'line-opacity': 0.9,
 							'line-width': 6,
 						},
 					})
@@ -177,7 +201,6 @@ const Map = ({
 		</AlbumContainer>
 	)
 }
-
 const MapMarker = ({
 	album,
 	media,
@@ -226,3 +249,4 @@ const MapMarker = ({
 		/>
 	)
 }
+

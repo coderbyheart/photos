@@ -142,11 +142,29 @@ const Map = ({
 		if (mapRef.current === null) return
 		console.debug(`[AlbumMap:Map]`, 'creating map')
 
+		const storageKey = `map-state-${album.id}`
+		const saved = localStorage.getItem(storageKey)
+		const savedState = saved
+			? (JSON.parse(saved) as { center: [number, number]; zoom: number })
+			: null
+
 		const map = new mapboxgl.Map({
 			container: mapRef.current,
 			style: 'mapbox://styles/mapbox/streets-v11',
-			center: album.geo ?? [10.394980097332425, 63.43050145201516],
-			zoom: 6,
+			center: savedState?.center ??
+				album.geo ?? [10.394980097332425, 63.43050145201516],
+			zoom: savedState?.zoom ?? 6,
+		})
+
+		map.on('moveend', () => {
+			const center = map.getCenter()
+			localStorage.setItem(
+				storageKey,
+				JSON.stringify({
+					center: [center.lng, center.lat],
+					zoom: map.getZoom(),
+				}),
+			)
 		})
 
 		if (album.tracks !== undefined) {
@@ -289,7 +307,11 @@ const Map = ({
 
 	useEffect(() => {
 		if (mapInstance === undefined) return
-		mapInstance.setLayoutProperty(CIRCLES_LAYER_ID, 'visibility', showPhotoLocations ? 'visible' : 'none');
+		mapInstance.setLayoutProperty(
+			CIRCLES_LAYER_ID,
+			'visibility',
+			showPhotoLocations ? 'visible' : 'none',
+		)
 	}, [showPhotoLocations, mapInstance])
 
 	return (

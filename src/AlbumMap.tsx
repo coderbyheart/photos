@@ -52,15 +52,6 @@ const MapIcon = styled.div`
 	box-shadow: 0 0 5px 0px #00000073;
 `
 
-const MapDot = styled.div`
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	background-color: transparent;
-	border: 2px solid #e00073;
-	cursor: pointer;
-`
-
 const ToggleLabel = styled.label`
 	display: flex;
 	align-items: center;
@@ -69,6 +60,12 @@ const ToggleLabel = styled.label`
 	justify-content: flex-end;
 	padding: 0.4rem 0;
 	cursor: pointer;
+`
+
+const MapSettings = styled.aside`
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
 `
 
 type MediaWithLocation = (Photo | Video) & {
@@ -121,6 +118,8 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 	return <Map mediaWithLocation={mediaWithLocation} album={album} />
 }
 
+const CIRCLES_LAYER_ID = 'photo-circles'
+
 const Map = ({
 	mediaWithLocation,
 	album,
@@ -131,6 +130,13 @@ const Map = ({
 	const mapRef = useRef(null)
 	const [mapInstance, setMapInstance] = useState<mapboxgl.Map>()
 	const [showThumbnails, setShowThumbnails] = useState(false)
+	const [showPhotoLocations, setShowPhotoLocations] = useState(true)
+	const mapDestroyedRef = useRef(false)
+	const { route } = useLocation()
+	const routeRef = useRef(route)
+	useEffect(() => {
+		routeRef.current = route
+	}, [route])
 
 	useEffect(() => {
 		if (mapRef.current === null) return
@@ -155,12 +161,10 @@ const Map = ({
 							properties: {},
 							geometry: {
 								type: 'LineString',
-								coordinates: (track.points as string[]).map((pos) =>
-								{
+								coordinates: (track.points as string[]).map((pos) => {
 									const [lat, lng] = pos.split(',').map(Number)
 									return [lng, lat]
-								},
-								),
+								}),
 							},
 						},
 					})
@@ -173,7 +177,8 @@ const Map = ({
 							'line-cap': 'round',
 						},
 						paint: {
-							'line-color': track.color ?? TRACK_COLORS[i % TRACK_COLORS.length],
+							'line-color':
+								track.color ?? TRACK_COLORS[i % TRACK_COLORS.length],
 							'line-opacity': 0.9,
 							'line-width': 6,
 						},
@@ -206,12 +211,100 @@ const Map = ({
 
 		return () => {
 			console.debug(`[AlbumMap:Map]`, 'destroying map')
+			mapDestroyedRef.current = true
 			map.remove()
 		}
 	}, [])
 
+	useEffect(() => {
+		if (mapInstance === undefined) return
+
+		if (mapInstance.getLayer(CIRCLES_LAYER_ID))
+			mapInstance.removeLayer(CIRCLES_LAYER_ID)
+		if (mapInstance.getSource(CIRCLES_LAYER_ID))
+			mapInstance.removeSource(CIRCLES_LAYER_ID)
+
+		mapInstance.addSource(CIRCLES_LAYER_ID, {
+			type: 'geojson',
+			data: {
+				type: 'FeatureCollection',
+				features: mediaWithLocation.map((media) => ({
+					type: 'Feature' as const,
+					properties: { mediaId: media.id },
+					geometry: {
+						type: 'Point' as const,
+						coordinates: [media.geo.lng, media.geo.lat],
+					},
+				})),
+			},
+		})
+
+		const beforeId =
+			album.tracks !== undefined &&
+			album.tracks.length > 0 &&
+			mapInstance.getLayer('route-0') !== undefined
+				? 'route-0'
+				: undefined
+
+		mapInstance.addLayer(
+			{
+				id: CIRCLES_LAYER_ID,
+				type: 'circle',
+				source: CIRCLES_LAYER_ID,
+				paint: {
+					'circle-radius': 10,
+					'circle-color': 'transparent',
+					'circle-opacity': 0.8,
+					'circle-stroke-width': 2,
+					'circle-stroke-color': '#e00073',
+				},
+			},
+			beforeId,
+		)
+
+		mapInstance.on('click', CIRCLES_LAYER_ID, (event) => {
+			const mediaId = event.features?.[0]?.properties?.mediaId
+			if (mediaId === undefined) return
+			routeRef.current(
+				`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(mediaId)}`,
+			)
+		})
+
+		mapInstance.on('mouseenter', CIRCLES_LAYER_ID, () => {
+			mapInstance.getCanvas().style.cursor = 'pointer'
+		})
+
+		mapInstance.on('mouseleave', CIRCLES_LAYER_ID, () => {
+			mapInstance.getCanvas().style.cursor = ''
+		})
+
+		return () => {
+			if (mapDestroyedRef.current) return
+			if (mapInstance.getLayer(CIRCLES_LAYER_ID))
+				mapInstance.removeLayer(CIRCLES_LAYER_ID)
+			if (mapInstance.getSource(CIRCLES_LAYER_ID))
+				mapInstance.removeSource(CIRCLES_LAYER_ID)
+		}
+	}, [mapInstance, mediaWithLocation])
+
+	useEffect(() => {
+		if (mapInstance === undefined) return
+		mapInstance.setLayoutProperty(CIRCLES_LAYER_ID, 'visibility', showPhotoLocations ? 'visible' : 'none');
+	}, [showPhotoLocations, mapInstance])
+
 	return (
 		<AlbumContainer>
+			<MapSettings>
+				<ToggleLabel>
+					<input
+						type="checkbox"
+						checked={showPhotoLocations}
+						onChange={(e) =>
+							setShowPhotoLocations((e.target as HTMLInputElement).checked)
+						}
+					/>
+					Show photo locations
+				</ToggleLabel>
 				<ToggleLabel>
 					<input
 						type="checkbox"
@@ -222,15 +315,16 @@ const Map = ({
 					/>
 					Show thumbnails
 				</ToggleLabel>
+			</MapSettings>
 			<MapContainer ref={mapRef}>
 				{mapInstance !== undefined &&
+					showThumbnails &&
 					mediaWithLocation.map((media) => (
 						<MapMarker
 							key={media.id}
 							album={album}
 							media={media}
 							map={mapInstance}
-							showThumbnail={showThumbnails}
 						/>
 					))}
 			</MapContainer>
@@ -241,12 +335,10 @@ const MapMarker = ({
 	album,
 	media,
 	map,
-	showThumbnail,
 }: {
 	album: Album
 	media: MediaWithLocation
 	map: mapboxgl.Map
-	showThumbnail: boolean
 }) => {
 	const markerRef = useRef<HTMLDivElement>(null)
 	const { route } = useLocation()
@@ -271,26 +363,19 @@ const MapMarker = ({
 	}
 
 	let backgroundImage: string | undefined
-	if (showThumbnail) {
-		if ('image' in media) backgroundImage = thumb(50, media)
-		if ('video' in media && 'youtube' in media.video)
-			backgroundImage = `https://img.youtube.com/vi/${media.video.youtube}/hqdefault.jpg`
-	}
+	if ('image' in media) backgroundImage = thumb(50, media)
+	if ('video' in media && 'youtube' in media.video)
+		backgroundImage = `https://img.youtube.com/vi/${media.video.youtube}/hqdefault.jpg`
 
 	return (
 		<div ref={markerRef} onClick={handleClick}>
-			{showThumbnail ? (
-				<MapIcon
-					style={{
-						backgroundImage: backgroundImage
-							? `url(${backgroundImage})`
-							: undefined,
-					}}
-				/>
-			) : (
-				<MapDot />
-			)}
+			<MapIcon
+				style={{
+					backgroundImage: backgroundImage
+						? `url(${backgroundImage})`
+						: undefined,
+				}}
+			/>
 		</div>
 	)
 }
-

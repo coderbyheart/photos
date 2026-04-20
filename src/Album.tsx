@@ -100,6 +100,15 @@ export const Album = ({
 				console.error(`Failed to load album cover: ${albumId}`)
 			})
 	}, [album])
+	useEffect(() => {
+		if (album === undefined || photoId !== undefined) return
+		const key = `scroll-album-${albumId}`
+		const saved = sessionStorage.getItem(key)
+		if (saved !== null) {
+			sessionStorage.removeItem(key)
+			requestAnimationFrame(() => window.scrollTo({ top: parseInt(saved, 10) }))
+		}
+	}, [album])
 
 	return album === undefined ? (
 		<p>Loading ...</p>
@@ -149,6 +158,7 @@ export const Album = ({
 						id={photoId}
 						key={k}
 						onClick={() => {
+							sessionStorage.setItem(`scroll-album-${albumId}`, String(window.scrollY))
 							route(
 								`/album/${encodeURIComponent(
 									albumId,

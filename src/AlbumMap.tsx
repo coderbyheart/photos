@@ -72,50 +72,65 @@ type MediaWithLocation = (Photo | Video) & {
 	geo: { lat: number; lng: number }
 }
 
+const MAP_HEIGHT_KEY = (albumId: string) => `map-height-${albumId}`
+
 export const AlbumMap = ({ album }: { album: Album }) => {
 	const [mediaWithLocation, setMediaWithLocation] = useState<
 		MediaWithLocation[]
 	>([])
+	const [savedHeight] = useState<number | null>(() => {
+		const v = localStorage.getItem(MAP_HEIGHT_KEY(album.id))
+		return v !== null ? parseInt(v, 10) : null
+	})
 
 	useEffect(() => {
 		let isMounted = true
-		const t = setTimeout(() => {
-			Promise.all(
-				album.photos.map((id) =>
-					fetch(`/data/photos/${id}.json`)
-						.then((res) => res.json())
-						.then((photo) => ({ ...photo, id }))
-						.catch(() => {
-							console.error(`Failed to load photo ${id}!`)
-							return {}
-						}),
-				),
+		Promise.all(
+			album.photos.map((id) =>
+				fetch(`/data/photos/${id}.json`)
+					.then((res) => res.json())
+					.then((photo) => ({ ...photo, id }))
+					.catch(() => {
+						console.error(`Failed to load photo ${id}!`)
+						return {}
+					}),
+			),
+		)
+			.then((withMaybeLocation) =>
+				withMaybeLocation.filter(({ geo }) => geo !== undefined),
 			)
-				.then((withMaybeLocation) =>
-					withMaybeLocation.filter(({ geo }) => geo !== undefined),
-				)
-				.then((mediaWithLocation) => {
-					if (!isMounted) return
-					if (mediaWithLocation.length > 0)
-						console.debug(
-							`Album has`,
-							mediaWithLocation.length,
-							'entries with geo location',
-						)
-					if (mediaWithLocation.length > 0)
-						setMediaWithLocation(mediaWithLocation)
-				})
-		}, 1000)
+			.then((mediaWithLocation) => {
+				if (!isMounted) return
+				if (mediaWithLocation.length > 0)
+					console.debug(
+						`Album has`,
+						mediaWithLocation.length,
+						'entries with geo location',
+					)
+				if (mediaWithLocation.length > 0)
+					setMediaWithLocation(mediaWithLocation)
+			})
 
 		return () => {
 			isMounted = false
-			clearTimeout(t)
 		}
 	}, [album])
 
-	if (mediaWithLocation.length === 0) return null
+	if (mediaWithLocation.length === 0) {
+		if (savedHeight !== null)
+			return <AlbumContainer style={{ height: savedHeight }} />
+		return null
+	}
 
-	return <Map mediaWithLocation={mediaWithLocation} album={album} />
+	return (
+		<Map
+			mediaWithLocation={mediaWithLocation}
+			album={album}
+			onHeightMeasured={(h) =>
+				localStorage.setItem(MAP_HEIGHT_KEY(album.id), String(h))
+			}
+		/>
+	)
 }
 
 const CIRCLES_LAYER_ID = 'photo-circles'
@@ -123,11 +138,14 @@ const CIRCLES_LAYER_ID = 'photo-circles'
 const Map = ({
 	mediaWithLocation,
 	album,
+	onHeightMeasured,
 }: {
 	mediaWithLocation: MediaWithLocation[]
 	album: Album
+	onHeightMeasured: (height: number) => void
 }) => {
 	const mapRef = useRef(null)
+	const containerRef = useRef<HTMLDivElement>(null)
 	const [mapInstance, setMapInstance] = useState<mapboxgl.Map>()
 	const [showThumbnails, setShowThumbnails] = useState(false)
 	const [showPhotoLocations, setShowPhotoLocations] = useState(true)
@@ -137,6 +155,12 @@ const Map = ({
 	useEffect(() => {
 		routeRef.current = route
 	}, [route])
+
+	useEffect(() => {
+		if (containerRef.current === null) return
+		const h = containerRef.current.offsetHeight
+		if (h > 0) onHeightMeasured(h)
+	}, [])
 
 	useEffect(() => {
 		if (mapRef.current === null) return
@@ -283,6 +307,7 @@ const Map = ({
 		mapInstance.on('click', CIRCLES_LAYER_ID, (event) => {
 			const mediaId = event.features?.[0]?.properties?.mediaId
 			if (mediaId === undefined) return
+			sessionStorage.setItem(`scroll-album-${album.id}`, String(window.scrollY))
 			routeRef.current(
 				`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(mediaId)}`,
 			)
@@ -315,7 +340,7 @@ const Map = ({
 	}, [showPhotoLocations, mapInstance])
 
 	return (
-		<AlbumContainer>
+		<AlbumContainer ref={containerRef}>
 			<MapSettings>
 				<ToggleLabel>
 					<input
@@ -379,6 +404,7 @@ const MapMarker = ({
 	}, [])
 
 	const handleClick = () => {
+		sessionStorage.setItem(`scroll-album-${album.id}`, String(window.scrollY))
 		route(
 			`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(media.id)}`,
 		)

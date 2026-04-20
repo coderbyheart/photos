@@ -27,6 +27,14 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
 				console.error(`Failed to load /data/photos-takenAt-${page}.json!`)
 			})
 	}, [page])
+	useEffect(() => {
+		if (photos.length === 0 || photoId !== undefined) return
+		const saved = sessionStorage.getItem('scroll-photos')
+		if (saved !== null) {
+			sessionStorage.removeItem('scroll-photos')
+			requestAnimationFrame(() => window.scrollTo({ top: parseInt(saved, 10) }))
+		}
+	}, [photos])
 	if (photos.length === 0) return <p>Loading ...</p>
 	const getNextPhotoId = (increment = 1) =>
 		photos[(photos.indexOf(photoId ?? photos[0]) + increment) % photos.length]
@@ -69,6 +77,7 @@ export const Photos = ({ photoId }: { photoId?: string }) => {
 						id={photoId}
 						key={k}
 						onClick={() => {
+							sessionStorage.setItem('scroll-photos', String(window.scrollY))
 							route(`/photo/${encodeURIComponent(photoId)}`)
 						}}
 					/>

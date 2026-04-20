@@ -1,5 +1,5 @@
 import { Fragment } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { PhotoThumb } from './Album'
 import { Gallery } from './AlbumGallery'
 import { Photo } from './Photo'
@@ -16,7 +16,17 @@ export const PhotosByTag = ({
 	const [taggedPhotos, setTaggedPhotos] = useState<Record<string, string[]>>({})
 	const [page, setPage] = useState<number>(1)
 	const itemsPerPage = 50
+	const savedScroll = useRef<number | null>(null)
 	const { route } = useLocation()
+	useEffect(() => {
+		if (photoId !== undefined) {
+			savedScroll.current = window.scrollY
+		} else if (savedScroll.current !== null) {
+			const pos = savedScroll.current
+			savedScroll.current = null
+			requestAnimationFrame(() => window.scrollTo({ top: pos }))
+		}
+	}, [photoId])
 	useEffect(() => {
 		fetch('/data/photos-tags.json')
 			.then((res) => res.json())

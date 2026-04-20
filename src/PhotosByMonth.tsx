@@ -1,5 +1,5 @@
 import { Fragment } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { PhotoThumb } from './Album'
 import { Gallery } from './AlbumGallery'
 import { Photo } from './Photo'
@@ -16,7 +16,17 @@ export const PhotosByMonth = ({
 	month: string
 }) => {
 	const [photos, setPhotos] = useState<string[]>([])
+	const savedScroll = useRef<number | null>(null)
 	const { route } = useLocation()
+	useEffect(() => {
+		if (photoId !== undefined) {
+			savedScroll.current = window.scrollY
+		} else if (savedScroll.current !== null) {
+			const pos = savedScroll.current
+			savedScroll.current = null
+			requestAnimationFrame(() => window.scrollTo({ top: pos }))
+		}
+	}, [photoId])
 	useEffect(() => {
 		fetch(`/data/photos-byMonth-${year}-${month}.json`)
 			.then((res) => res.json())

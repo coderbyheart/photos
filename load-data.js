@@ -117,8 +117,17 @@ const main = async () => {
 					}),
 				)
 				// Sort photos by date taken, write paginated
-				photoDocs.sort(({ doc: { takenAt: a } }, { doc: { takenAt: b } }) =>
-					b.localeCompare(a),
+				photoDocs.sort(
+					(
+						{ slug: slugA, doc: { takenAt: a } },
+						{ slug: slugB, doc: { takenAt: b } },
+					) => {
+						if (a === undefined)
+							throw new Error(`Photo ${slugA} is missing takenAt`)
+						if (b === undefined)
+							throw new Error(`Photo ${slugB} is missing takenAt`)
+						return b.localeCompare(a)
+					},
 				)
 				const photoPages = photoDocs.reduce(
 					(chunks, { slug }) => {

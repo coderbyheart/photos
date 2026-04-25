@@ -194,8 +194,9 @@ export const Photo = ({
 					})
 				}
 			})
-			.catch(() => {
+			.catch((err) => {
 				console.error(`Failed to load photo data: ${id}`)
+				console.error(err)
 			})
 		return () => {
 			isMounted = false

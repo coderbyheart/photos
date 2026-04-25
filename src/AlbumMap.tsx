@@ -134,6 +134,7 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 }
 
 const CIRCLES_LAYER_ID = 'photo-circles'
+const VIDEO_CIRCLES_LAYER_ID = 'video-circles'
 
 const Map = ({
 	mediaWithLocation,
@@ -261,82 +262,95 @@ const Map = ({
 	useEffect(() => {
 		if (mapInstance === undefined) return
 
-		if (mapInstance.getLayer(CIRCLES_LAYER_ID))
-			mapInstance.removeLayer(CIRCLES_LAYER_ID)
-		if (mapInstance.getSource(CIRCLES_LAYER_ID))
-			mapInstance.removeSource(CIRCLES_LAYER_ID)
-
-		mapInstance.addSource(CIRCLES_LAYER_ID, {
-			type: 'geojson',
-			data: {
-				type: 'FeatureCollection',
-				features: mediaWithLocation.map((media) => ({
-					type: 'Feature' as const,
-					properties: { mediaId: media.id },
-					geometry: {
-						type: 'Point' as const,
-						coordinates: [media.geo.lng, media.geo.lat],
-					},
-				})),
-			},
-		})
-
-		const beforeId =
-			album.tracks !== undefined &&
-			album.tracks.length > 0 &&
-			mapInstance.getLayer('route-0') !== undefined
-				? 'route-0'
-				: undefined
-
-		mapInstance.addLayer(
-			{
-				id: CIRCLES_LAYER_ID,
-				type: 'circle',
-				source: CIRCLES_LAYER_ID,
-				paint: {
-					'circle-radius': 10,
-					'circle-color': 'transparent',
-					'circle-opacity': 0.8,
-					'circle-stroke-width': 2,
-					'circle-stroke-color': '#e00073',
-				},
-			},
-			beforeId,
+		const photosWithLocation = mediaWithLocation.filter(
+			(m) => !('video' in m && m.video !== undefined),
+		)
+		const videosWithLocation = mediaWithLocation.filter(
+			(m) => 'video' in m && m.video !== undefined,
 		)
 
-		mapInstance.on('click', CIRCLES_LAYER_ID, (event) => {
-			const mediaId = event.features?.[0]?.properties?.mediaId
-			if (mediaId === undefined) return
-			sessionStorage.setItem(`scroll-album-${album.id}`, String(window.scrollY))
-			routeRef.current(
-				`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(mediaId)}`,
+		for (const [layerId, media, strokeColor] of [
+			[CIRCLES_LAYER_ID, photosWithLocation, '#e00073'],
+			[VIDEO_CIRCLES_LAYER_ID, videosWithLocation, '#0071C7'],
+		] as const) {
+			if (mapInstance.getLayer(layerId)) mapInstance.removeLayer(layerId)
+			if (mapInstance.getSource(layerId)) mapInstance.removeSource(layerId)
+
+			mapInstance.addSource(layerId, {
+				type: 'geojson',
+				data: {
+					type: 'FeatureCollection',
+					features: media.map((m) => ({
+						type: 'Feature' as const,
+						properties: { mediaId: m.id },
+						geometry: {
+							type: 'Point' as const,
+							coordinates: [m.geo.lng, m.geo.lat],
+						},
+					})),
+				},
+			})
+
+			const beforeId =
+				album.tracks !== undefined &&
+				album.tracks.length > 0 &&
+				mapInstance.getLayer('route-0') !== undefined
+					? 'route-0'
+					: undefined
+
+			mapInstance.addLayer(
+				{
+					id: layerId,
+					type: 'circle',
+					source: layerId,
+					paint: {
+						'circle-radius': 10,
+						'circle-color': 'transparent',
+						'circle-opacity': 0.8,
+						'circle-stroke-width': 2,
+						'circle-stroke-color': strokeColor,
+					},
+				},
+				beforeId,
 			)
-		})
 
-		mapInstance.on('mouseenter', CIRCLES_LAYER_ID, () => {
-			mapInstance.getCanvas().style.cursor = 'pointer'
-		})
+			mapInstance.on('click', layerId, (event) => {
+				const mediaId = event.features?.[0]?.properties?.mediaId
+				if (mediaId === undefined) return
+				sessionStorage.setItem(
+					`scroll-album-${album.id}`,
+					String(window.scrollY),
+				)
+				routeRef.current(
+					`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(mediaId)}`,
+				)
+			})
 
-		mapInstance.on('mouseleave', CIRCLES_LAYER_ID, () => {
-			mapInstance.getCanvas().style.cursor = ''
-		})
+			mapInstance.on('mouseenter', layerId, () => {
+				mapInstance.getCanvas().style.cursor = 'pointer'
+			})
+
+			mapInstance.on('mouseleave', layerId, () => {
+				mapInstance.getCanvas().style.cursor = ''
+			})
+		}
 
 		return () => {
 			if (mapDestroyedRef.current) return
-			if (mapInstance.getLayer(CIRCLES_LAYER_ID))
-				mapInstance.removeLayer(CIRCLES_LAYER_ID)
-			if (mapInstance.getSource(CIRCLES_LAYER_ID))
-				mapInstance.removeSource(CIRCLES_LAYER_ID)
+			for (const layerId of [CIRCLES_LAYER_ID, VIDEO_CIRCLES_LAYER_ID]) {
+				if (mapInstance.getLayer(layerId)) mapInstance.removeLayer(layerId)
+				if (mapInstance.getSource(layerId)) mapInstance.removeSource(layerId)
+			}
 		}
 	}, [mapInstance, mediaWithLocation])
 
 	useEffect(() => {
 		if (mapInstance === undefined) return
-		mapInstance.setLayoutProperty(
-			CIRCLES_LAYER_ID,
-			'visibility',
-			showPhotoLocations ? 'visible' : 'none',
-		)
+		const visibility = showPhotoLocations ? 'visible' : 'none'
+		for (const layerId of [CIRCLES_LAYER_ID, VIDEO_CIRCLES_LAYER_ID]) {
+			if (mapInstance.getLayer(layerId))
+				mapInstance.setLayoutProperty(layerId, 'visibility', visibility)
+		}
 	}, [showPhotoLocations, mapInstance])
 
 	return (

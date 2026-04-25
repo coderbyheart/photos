@@ -72,14 +72,14 @@ type MediaWithLocation = (Photo | Video) & {
 	geo: { lat: number; lng: number }
 }
 
-const MAP_HEIGHT_KEY = (albumId: string) => `map-height-${albumId}`
+const MAP_HEIGHT_KEY = 'map-height'
 
 export const AlbumMap = ({ album }: { album: Album }) => {
 	const [mediaWithLocation, setMediaWithLocation] = useState<
 		MediaWithLocation[]
 	>([])
 	const [savedHeight] = useState<number | null>(() => {
-		const v = localStorage.getItem(MAP_HEIGHT_KEY(album.id))
+		const v = localStorage.getItem(MAP_HEIGHT_KEY)
 		return v !== null ? parseInt(v, 10) : null
 	})
 
@@ -127,7 +127,7 @@ export const AlbumMap = ({ album }: { album: Album }) => {
 			mediaWithLocation={mediaWithLocation}
 			album={album}
 			onHeightMeasured={(h) =>
-				localStorage.setItem(MAP_HEIGHT_KEY(album.id), String(h))
+				localStorage.setItem(MAP_HEIGHT_KEY, String(h))
 			}
 		/>
 	)
@@ -166,7 +166,7 @@ const Map = ({
 		if (mapRef.current === null) return
 		console.debug(`[AlbumMap:Map]`, 'creating map')
 
-		const storageKey = `map-state-${album.id}`
+		const storageKey = 'map-state'
 		const saved = localStorage.getItem(storageKey)
 		const savedState = saved
 			? (JSON.parse(saved) as { center: [number, number]; zoom: number })

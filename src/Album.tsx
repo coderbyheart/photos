@@ -212,7 +212,7 @@ const PhotoNavigator = ({
 			onLoad={(size) => {
 				// Preload next image
 				cachedFetch<Photo | Video>(
-					`/data/photos/${getNextPhotoId(2)}.json`,
+					`/data/photos/${getNextPhotoId(1)}.json`,
 				).then(async (media) => {
 					if ('image' in media) {
 						fetch(sized(size, media), {

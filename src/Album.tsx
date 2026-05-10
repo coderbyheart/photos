@@ -299,7 +299,7 @@ export const PhotoThumb = ({
 			style={{
 				backgroundImage: photo ? `url(${thumb(250, photo)})` : undefined,
 			}}
-			onClick={(e) => {
+			onClick={(e: React.MouseEvent<HTMLDivElement>) => {
 				if (e.ctrlKey) {
 					if (photo?.license !== 'None' && photo?.url !== undefined) {
 						window.open(photo.url, '_blank')
@@ -335,7 +335,7 @@ const WithThumbnail = ({
 				style={{
 					backgroundImage: `url(${url})`,
 				}}
-				onClick={(e) => {
+				onClick={(e: React.MouseEvent<HTMLDivElement>) => {
 					if (e.ctrlKey) {
 						if (photo?.license !== 'None' && photo?.url !== undefined) {
 							window.open(photo.url, '_blank')

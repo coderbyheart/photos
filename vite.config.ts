@@ -27,8 +27,4 @@ export default defineConfig({
 		outDir: './build',
 	},
 	envPrefix: 'PUBLIC_',
-	esbuild: {
-		// See https://github.com/vitejs/vite/issues/8644
-		logOverride: { 'this-is-undefined-in-esm': 'silent' },
-	},
 })

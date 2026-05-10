@@ -174,6 +174,8 @@ export const Album = ({
 	)
 }
 
+const PRELOAD_COUNT = 25
+
 const PhotoNavigator = ({
 	photoId,
 	album,
@@ -188,41 +190,94 @@ const PhotoNavigator = ({
 		(album.photos.indexOf(photoId) + increment) % album.photos.length
 		]
 	const { route } = useLocation()
+	const preloadAbort = useRef<{ cancelled: boolean } | null>(null)
+	useEffect(
+		() => () => {
+			if (preloadAbort.current !== null) preloadAbort.current.cancelled = true
+		},
+		[photoId],
+	)
 	return (
-		<Photo
-			id={photoId}
-			onPrev={() => {
-				let k = album.photos.indexOf(photoId) - 1
-				if (k < 0) k = album.photos.length - 1
-				route(
-					`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
-						album.photos[k],
-					)}`,
-				)
-				window.scrollTo({ top: 0 })
-			}}
-			onNext={() => {
-				route(
-					`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
-						getNextPhotoId(),
-					)}`,
-				)
-				window.scrollTo({ top: 0 })
-			}}
-			onLoad={(size) => {
-				// Preload next image
-				cachedFetch<Photo | Video>(
-					`/data/photos/${getNextPhotoId(1)}.json`,
-				).then(async (media) => {
-					if ('image' in media) {
-						fetch(sized(size, media), {
-							mode: 'no-cors',
-						})
+		<Fragment>
+			<Photo
+				id={photoId}
+				onPrev={() => {
+					let k = album.photos.indexOf(photoId) - 1
+					if (k < 0) k = album.photos.length - 1
+					route(
+						`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
+							album.photos[k],
+						)}`,
+					)
+					window.scrollTo({ top: 0 })
+				}}
+				onNext={() => {
+					route(
+						`/album/${encodeURIComponent(album.id)}/photo/${encodeURIComponent(
+							getNextPhotoId(),
+						)}`,
+					)
+					window.scrollTo({ top: 0 })
+				}}
+				onLoad={(size) => {
+					if (preloadAbort.current !== null)
+						preloadAbort.current.cancelled = true
+					const abort = { cancelled: false }
+					preloadAbort.current = abort
+					const maxOffset = Math.min(PRELOAD_COUNT, album.photos.length - 1)
+					const speedSamples: { bytes: number; ms: number }[] = []
+					const preload = async (offset: number): Promise<void> => {
+						if (abort.cancelled || offset > maxOffset) return
+						try {
+							const media = await cachedFetch<Photo | Video>(
+								`/data/photos/${getNextPhotoId(offset)}.json`,
+							)
+							if (abort.cancelled) return
+							if ('image' in media) {
+								const url = sized(size, media)
+								const start = performance.now()
+								let bytes = 0
+								try {
+									const response = await fetch(url)
+									const reader = response.body?.getReader()
+									if (reader !== undefined) {
+										while (true) {
+											const { done, value } = await reader.read()
+											if (abort.cancelled) {
+												reader.cancel()
+												return
+											}
+											if (done) break
+											bytes += value?.byteLength ?? 0
+										}
+									} else {
+										bytes = (await response.blob()).size
+									}
+								} catch {
+									await fetch(url, { mode: 'no-cors' })
+								}
+								const elapsed = performance.now() - start
+								if (bytes > 0 && elapsed > 0) {
+									speedSamples.push({ bytes, ms: elapsed })
+									if (speedSamples.length > 5) speedSamples.shift()
+									const totalBytes = speedSamples.reduce(
+										(s, x) => s + x.bytes,
+										0,
+									)
+									const totalMs = speedSamples.reduce((s, x) => s + x.ms, 0)
+								}
+							}
+						} catch {
+							// ignore preload errors
+						}
+						if (abort.cancelled) return
+						return preload(offset + 1)
 					}
-				})
-			}}
-			onClose={onClose}
-		/>
+					preload(1)
+				}}
+				onClose={onClose}
+			/>
+		</Fragment>
 	)
 }
 

@@ -1,7 +1,7 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { fromEnv } from '@nordicsemiconductor/from-env'
 import { createReadStream, promises as fs } from 'fs'
-import yaml from 'js-yaml'
+import * as yaml from 'js-yaml'
 import path from 'path'
 import { exif, geo } from './util/exif.js'
 import { run } from './util/run.js'
@@ -10,7 +10,7 @@ const s3 = new S3Client({})
 const { bucketName } = fromEnv({ bucketName: 'BUCKET_NAME' })(process.env)
 const PhotosCDNEndpoint = `https://7w7z6ydf2htamqdsm6nbxm7sma0nkltc.lambda-url.eu-central-1.on.aws/`
 
-const importPhoto = async (photo) => {
+const importPhoto = async (photo: string) => {
 	const checksum = (await run('sha256sum', photo)).split(' ')[0].substr(0, 8)
 
 	const { ext, base } = path.parse(photo)
@@ -31,7 +31,7 @@ const importPhoto = async (photo) => {
 						/^([0-9]{4}):([0-9]{2}):([0-9]{2}) /,
 						'$1-$2-$3T',
 					),
-			  )
+				)
 			: new Date()
 
 	const fileName = `${takenAt

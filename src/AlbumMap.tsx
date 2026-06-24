@@ -315,7 +315,8 @@ const Map = ({
 			)
 
 			mapInstance.on('click', layerId, (event) => {
-				const mediaId = event.features?.[0]?.properties?.mediaId
+				const f = event.features?.[0] as mapboxgl.GeoJSONFeature &{properties: { mediaId?: string }}
+				const mediaId = f?.properties?.mediaId
 				if (mediaId === undefined) return
 				sessionStorage.setItem(
 					`scroll-album-${album.id}`,

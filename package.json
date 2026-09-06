@@ -44,7 +44,8 @@
     "remark-html": "16.0.1",
     "remark-rehype": "11.1.2",
     "typescript": "7.0.2",
-    "vite": "8.2.2"
+    "vite": "8.2.2",
+    "wrangler": "4.129.0"
   },
   "lint-staged": {
     "*.{md,json,yaml,yml,js}": [

@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node load-data.js && vite",
     "build": "node load-data.js && vite build --emptyOutDir",
-    "prepare": "husky"
+    "prepare": "husky && check-node-version --package"
   },
   "dependencies": {
     "date-fns": "4.4.0",
@@ -32,6 +32,7 @@
     "@types/styled-components": "5.1.36",
     "bottleneck": "2.19.5",
     "chai": "6.2.2",
+    "check-node-version": "4.2.1",
     "contentful-management": "12.16.0",
     "husky": "9.1.7",
     "js-yaml": "5.4.1",

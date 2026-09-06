@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "start": "node load-data.js && vite",
-    "build": "node load-data.js && vite build --emptyOutDir",
+    "build": "node load-data.js && vite build --emptyOutDir && cp ./build/index.html ./build/404.html",
     "prepare": "husky && check-node-version --package"
   },
   "dependencies": {

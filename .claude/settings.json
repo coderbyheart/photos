@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//data/m/OnePlus 15 Pro/2026-04 Camino/DCIM/Videos/**)",
-      "Bash(xargs -I{} grep -c \"^video:\" {})",
-      "Bash(python3)"
-    ]
-  }
-}
